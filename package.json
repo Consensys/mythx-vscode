@@ -1,0 +1,47 @@
+{
+    "name": "vscode-mythx",
+    "displayName": "VS Code for MythX",
+    "description": "VS Code extension for MythX",
+    "version": "0.1.0",
+    "publisher": "consensys",
+    "engines": {
+        "vscode": "^1.33.0-insider"
+    },
+    "categories": [
+        "Extension Packs",
+        "Other"
+    ],
+    "activationEvents": [
+        "onCommand:mythx.analyzeContract"
+    ],
+    "main": "./out/extension.js",
+    "contributes": {
+        "commands": [
+            {
+                "command": "mythx.analyzeContract",
+                "title": "MythX: Analyze smart contract"
+            }
+        ]
+    },
+    "scripts": {
+        "vscode:prepublish": "npm run compile",
+        "package": "npx vsce package",
+        "compile": "tsc -p ./",
+        "watch": "tsc -watch -p ./",
+        "postinstall": "node ./node_modules/vscode/bin/install"
+    },
+    "devDependencies": {
+        "@types/fs-extra": "^5.0.5",
+        "@types/node": "^11.13.8",
+        "tslint": "^5.16.0",
+        "typescript": "^3.4.5",
+        "vscode": "^1.1.33"
+    },
+    "dependencies": {
+        "fs-extra": "^7.0.1",
+        "vscode-azureextensionui": "^0.23.3"
+    },
+    "extensionDependencies": [
+        "ms-vscode.azure-account"
+    ]
+}
