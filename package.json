@@ -21,7 +21,23 @@
                 "command": "mythx.analyzeContract",
                 "title": "MythX: Analyze smart contract"
             }
-        ]
+        ],
+        "menus": {
+            "commandPalette": [{
+                "when": "resourceLangId == solidity",
+                "command": "mythx.analyzeContract"
+            }],
+            "explorer/context": [{
+                "when": "resourceLangId == solidity",
+                "command": "mythx.analyzeContract",
+                "group": "2_mythx"
+            }],
+            "editor/title": [{
+                "when": "resourceLangId == solidity",
+                "command": "mythx.analyzeContract",
+                "group": "navigation"
+            }]
+        }
     },
     "scripts": {
         "vscode:prepublish": "npm run compile",
