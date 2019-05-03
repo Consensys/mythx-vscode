@@ -1,8 +1,7 @@
 import * as vscode from 'vscode';
 import { AuthService, AnalysesService } from '../../node_modules/mythxjs/dist/index.node'
-import { ext } from '../extensionVariables'
 
-import { MOCK_ISSUE } from '../mocks/issues'
+import { syntaxHighlight } from '../utils/syntaxHighlight'
 
 const { window } = vscode
 
@@ -19,7 +18,17 @@ async function start() {
     const contractData: any = await ANALYSESSERVICE.submitContract(access)
     const { uuid } = contractData
 
+    // Create and show panel
+    const panel = vscode.window.createWebviewPanel(
+        'analysisResult',
+        'Analysis Result',
+        vscode.ViewColumn.One,
+        {
+            enableScripts: true
+        }
+    );
 
+    // Get in progress bar
     await window.withProgress(
         {
             location: vscode.ProgressLocation.Notification,
@@ -40,12 +49,9 @@ async function start() {
 
 
     const detectedIssue = await ANALYSESSERVICE.getDetectedIssues(uuid, access)
-    console.log(detectedIssue, 'detected')
-    window.showInformationMessage(detectedIssue);
 
-
-    ext.outputChannel.append(MOCK_ISSUE)
-    ext.outputChannel.show()
+    // Set HTML content
+    panel.webview.html = getWebviewContent(detectedIssue);
 
 }
 
@@ -53,3 +59,28 @@ export async function analyzeContract(): Promise<void> {
     start()
 }
 
+
+function getWebviewContent(data) {
+    return `<!DOCTYPE html>
+  <html lang="en">
+  <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>Analysis result</title>
+  </head>
+  <style>
+  h1 {color: red;}
+  pre { padding: 5px; margin: 5px; }
+.string { color: green; }
+.number { color: darkorange; }
+.boolean { color: blue; }
+.null { color: magenta; }
+.key { color: red; }
+</style>
+  <body>
+        <h2>Result of analysed smart contract</h2>
+        <h3>This could take up to a couple of minutes..</h3>
+        <pre id="json">${syntaxHighlight(JSON.stringify(data, undefined, 2))}</pre>
+  </body>
+  </html>`;
+}
