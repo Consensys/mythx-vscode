@@ -65,6 +65,7 @@
         "vscode-azureextensionui": "^0.23.3"
     },
     "extensionDependencies": [
-        "ms-vscode.azure-account"
+        "ms-vscode.azure-account",
+        "JuanBlanco.solidity"
     ]
 }

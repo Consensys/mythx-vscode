@@ -39,3 +39,24 @@ export interface SubmitContractRes {
     submittedBy: string
     uuid: string
 }
+
+export interface descriptionObj {
+    head: string
+    tail: string
+    // Make below a mapping of severity warnings
+    severity: string
+}
+
+export interface decodedLocationsObj {
+    line: number
+    column: number
+}
+export interface issueObj {
+    swcID:string
+    swcTitle:string
+    description:descriptionObj
+    severity:"Low"
+    locations:Array<any>
+    extra: any
+    decodedLocations?:Array<Array<decodedLocationsObj>>
+}

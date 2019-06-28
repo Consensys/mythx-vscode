@@ -1,13 +1,13 @@
-import { IAzureUserInput, IAzureQuickPickItem, IActionContext, IAzureMessageOptions, IAzureQuickPickOptions, UserCancelledError } from 'vscode-azureextensionui';
-import * as path from 'path';
-import * as fsUtils from './fs';
-import { ext } from '../extensionVariables';
-import { getExtensionSetting, updateSetting } from '../ProjectSettings';
-import * as vscode from 'vscode';
-import { isBoolean } from 'util';
+import { IAzureUserInput, IAzureQuickPickItem, IActionContext, IAzureMessageOptions, IAzureQuickPickOptions, UserCancelledError } from "vscode-azureextensionui";
+import * as path from "path";
+import * as fsUtils from "./fs";
+import { ext } from "../extensionVariables";
+import { getExtensionSetting, updateSetting } from "../ProjectSettings";
+import * as vscode from "vscode";
+import { isBoolean } from "util";
 
 export async function selectWorkspaceFolder(ui: IAzureUserInput, placeHolder: string, getSubPath?: (f: vscode.WorkspaceFolder) => string | undefined): Promise<string> {
-    return await selectWorkspaceItem(ui, placeHolder, { canSelectFiles: false, canSelectFolders: true, canSelectMany: false, defaultUri: vscode.workspace.workspaceFolders && vscode.workspace.workspaceFolders.length > 0 ? vscode.workspace.workspaceFolders[0].uri : undefined, openLabel: 'Select Folder'}, getSubPath);
+    return await selectWorkspaceItem(ui, placeHolder, { canSelectFiles: false, canSelectFolders: true, canSelectMany: false, defaultUri: vscode.workspace.workspaceFolders && vscode.workspace.workspaceFolders.length > 0 ? vscode.workspace.workspaceFolders[0].uri : undefined, openLabel: "Select Folder"}, getSubPath);
 };
 
 export async function selectWorkspaceItem(ui: IAzureUserInput, placeHolder: string, options: vscode.OpenDialogOptions, getSubPath?: (f: vscode.WorkspaceFolder) => string | undefined): Promise<string> {
@@ -23,19 +23,19 @@ export async function selectWorkspaceItem(ui: IAzureUserInput, placeHolder: stri
             return { label: path.basename(fsPath), description: fsPath, data: fsPath };
         });
 
-        folderPicks.push({ label: '$(file-directory Browse ...', description: '', data: undefined });
+        folderPicks.push({ label: "$(file-directory Browse ...", description: "", data: undefined });
         folder = await ui.showQuickPick(folderPicks, { placeHolder });
     }
     return folder && folder.data ? folder.data : (await ui.showOpenDialog(options))[0].fsPath;
 }
 
 enum OpenBehavior {
-    AddToWorkspace = 'AddToWorkspace',
-    OpenInNewWindow = 'OpenInNewWindow',
-    OpenInCurrentWindow = 'OpenInCurrentWindow'
+    AddToWorkspace = "AddToWorkspace",
+    OpenInNewWindow = "OpenInNewWindow",
+    OpenInCurrentWindow = "OpenInCurrentWindow"
 }
 
-const projectOpenBehaviorSetting: string = 'projectOpenBehavior';
+const projectOpenBehaviorSetting: string = "projectOpenBehavior";
 
 export async function ensureFolderIsOpen(fsPath: string, actionContext: IActionContext, message?: string, allowSubFolder: boolean = false): Promise<string> {
     const openFolders: vscode.WorkspaceFolder[] = vscode.workspace.workspaceFolders || [];
@@ -47,7 +47,7 @@ export async function ensureFolderIsOpen(fsPath: string, actionContext: IActionC
         return folder.uri.fsPath;
     } else {
         if (message) {
-            const open: vscode.MessageItem= { title: 'Open Folder' };
+            const open: vscode.MessageItem= { title: "Open Folder" };
             await ext.ui.showWarningMessage(message, { modal: true }, open);
         }
 
@@ -63,17 +63,17 @@ export async function ensureFolderIsOpen(fsPath: string, actionContext: IActionC
             }
         }
 
-        const notAlwaysPick: IAzureQuickPickItem<OpenBehavior | boolean> = { label: '$(circle-slash) Always use this choice', description: '', data: false, suppressPersistence: true };
-        const alwaysPick: IAzureQuickPickItem<OpenBehavior | boolean> = { label: '$(check) Always use this choice', description: '', data: true, suppressPersistence: true };
+        const notAlwaysPick: IAzureQuickPickItem<OpenBehavior | boolean> = { label: "$(circle-slash) Always use this choice", description: "", data: false, suppressPersistence: true };
+        const alwaysPick: IAzureQuickPickItem<OpenBehavior | boolean> = { label: "$(check) Always use this choice", description: "", data: true, suppressPersistence: true };
 
         const picks: IAzureQuickPickItem<OpenBehavior | boolean>[] = [
-            { label: 'Add to workspace', description: '', data: OpenBehavior.AddToWorkspace },
-            { label: 'Open in new window', description: '', data: OpenBehavior.OpenInNewWindow },
-            { label: 'Open in current window', description: '', data: OpenBehavior.OpenInCurrentWindow },
+            { label: "Add to workspace", description: "", data: OpenBehavior.AddToWorkspace },
+            { label: "Open in new window", description: "", data: OpenBehavior.OpenInNewWindow },
+            { label: "Open in current window", description: "", data: OpenBehavior.OpenInCurrentWindow },
             notAlwaysPick
         ];
 
-        const options: IAzureQuickPickOptions = { placeHolder: 'Select how you would like to open your project', suppressPersistence: true };
+        const options: IAzureQuickPickOptions = { placeHolder: "Select how you would like to open your project", suppressPersistence: true };
 
         let result: OpenBehavior | boolean;
         let alwaysUseThisChoice: boolean = false;
@@ -100,7 +100,7 @@ export async function ensureFolderIsOpen(fsPath: string, actionContext: IActionC
         if (openBehavior === OpenBehavior.AddToWorkspace) {
             vscode.workspace.updateWorkspaceFolders(openFolders.length, 0, { uri: uri });
         } else {
-            await vscode.commands.executeCommand('vscode.openFolder', uri, openBehavior === OpenBehavior.OpenInNewWindow);
+            await vscode.commands.executeCommand("vscode.openFolder", uri, openBehavior === OpenBehavior.OpenInNewWindow);
             if (openBehavior === OpenBehavior.OpenInNewWindow) {
                 throw new UserCancelledError();
             }

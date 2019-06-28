@@ -1,5 +1,5 @@
-import { IAzureUserInput, AzureTreeDataProvider } from 'vscode-azureextensionui';
-import { ExtensionContext, OutputChannel } from 'vscode';
+import { IAzureUserInput, AzureTreeDataProvider } from "vscode-azureextensionui";
+import { ExtensionContext, OutputChannel } from "vscode";
 
 export namespace ext {
     export let context: ExtensionContext;
