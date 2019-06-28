@@ -38,10 +38,12 @@ export async function analyzeContract(): Promise<void> {
 
 	await waitFor(5000);
 
-	const access = await loginAndGetToken()
+	await loginAndGetToken()
 
 
 	const contractName = await window.showInputBox(contractNameOption)
+	
+	await analyzeAst(contractName)
 
 	const fileContent = await getFileContent()
 
@@ -83,56 +85,23 @@ export async function analyzeContract(): Promise<void> {
 	// Diagnostic
 	const collection = vscode.languages.createDiagnosticCollection('test');
 
-	// errorCodeDiagnostic(issues)
-	updateDiagnostics(vscode.window.activeTextEditor.document, collection, issues);
-
-		// Set HTML content
-	// panel.webview.html = getWebviewContent(analysisResult);
+	errorCodeDiagnostic(vscode.window.activeTextEditor.document, collection, issues);
 }
 
-
-function updateDiagnostics(document: vscode.TextDocument, collection: vscode.DiagnosticCollection, arrIssues: Array<issueObj>): void {
-	let diagnostics: vscode.Diagnostic[] = [];
-
-	arrIssues.map(
-		issue => {
-				let position = {
-						start: {
-								line: undefined,
-								column: undefined
-						},
-						end: {
-								line: undefined,
-								column: undefined
-						}
-				}
-				const {decodedLocations} = issue
-				// TODO: all the below should be better extracted
-				if(decodedLocations) {
-					decodedLocations.map(
-						locations => {
-							// vscode diagnostics starts from 0
-							position.start.line = locations[0].line - 1;
-							position.start.column = locations[0].column;
-							position.end.line = locations[1].line - 1;
-							position.end.column = locations[1].column;
-							let message = `${issue.swcID}. ${issue.description.head}`;
-							let range = new vscode.Range(new vscode.Position(position.start.line, position.start.column), new vscode.Position(position.end.line, position.end.column))
-							// let severity = item.severity.toLowerCase() === "warning" ? vscode.DiagnosticSeverity.Warning : vscode.DiagnosticSeverity.Error;
-							let severity = vscode.DiagnosticSeverity.Error;
-							let relatedInformation = ''
-							let diagnostic = new vscode.Diagnostic(range, message, severity);
-							diagnostics.push(diagnostic);
-						}
-					)
-				}
-
-				console.log('location.start.line', issue.decodedLocations[0][0].line)
-				console.log('location.start.column', issue.decodedLocations[0][0].column)
-				console.log('location.end.line', issue.decodedLocations[0][1].line)
-				console.log('location.end.column', issue.decodedLocations[0][1].column)
-				console.log(`${issue.swcID}. ${issue.description.head}`)
-		}
-)
-collection.set(document.uri, diagnostics)
+async function analyzeAst(contractName) {
+	try {
+		const documentObj = await vscode.workspace.openTextDocument(`${vscode.workspace.rootPath}/bin/${contractName}-sol-output.json`)
+		const content = JSON.parse(documentObj.getText());
+		// console.log(content, 'parsed')
+		// console.log(`${vscode.workspace.rootPath}/${contractName}.sol`, 'path')
+		const contract = content.contracts[`${vscode.workspace.rootPath}/${contractName}.sol`]
+		console.log(contract, 'contract')
+		const bytecode = contract.evm.bytecode;
+		const deployedBytecode = contract.evm.deployedBytecode;
+		
+		console.log(bytecode, deployedBytecode)
+	
+	} catch(err) {
+		vscode.window.showWarningMessage(`Mythx error with your request. ${err}`);
+	}
 }
