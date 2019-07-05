@@ -22,7 +22,8 @@ async function loginAndGetToken() {
 		
     return access 
     } catch(err) {
-        vscode.window.showWarningMessage(`MythXCode Error with running the extension. ${err}`);
+				vscode.window.showWarningMessage(`MythXCode Error with running the extension. ${err}`);
+				throw new Error('Error with running extension.')
     }
 }
 
@@ -43,7 +44,7 @@ export async function analyzeContract(): Promise<void> {
 
 	const contractName = await window.showInputBox(contractNameOption)
 	
-	await analyzeAst(contractName)
+	// await analyzeAst(contractName)
 
 	const fileContent = await getFileContent()
 
@@ -88,9 +89,11 @@ export async function analyzeContract(): Promise<void> {
 	errorCodeDiagnostic(vscode.window.activeTextEditor.document, collection, issues);
 }
 
-async function analyzeAst(contractName) {
+async function analyzeAst(contractName: string, fileName: string) {
 	try {
-		const documentObj = await vscode.workspace.openTextDocument(`${vscode.workspace.rootPath}/bin/${contractName}-sol-output.json`)
+		const contractNameLow = contractName.toLowerCase()
+		console.log('analyzeAst', `${vscode.workspace.rootPath}/bin/${contractNameLow}-sol-output.json`)
+		const documentObj = await vscode.workspace.openTextDocument(`${vscode.workspace.rootPath}/bin/${contractNameLow}-sol-output.json`)
 		const content = JSON.parse(documentObj.getText());
 		// console.log(content, 'parsed')
 		// console.log(`${vscode.workspace.rootPath}/${contractName}.sol`, 'path')

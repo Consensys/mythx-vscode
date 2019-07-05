@@ -61,6 +61,7 @@
     },
     "dependencies": {
         "fs-extra": "^7.0.1",
+        "mythxjs": "^1.1.0",
         "remix-lib": "^0.4.6",
         "vscode-azureextensionui": "^0.23.3"
     },
