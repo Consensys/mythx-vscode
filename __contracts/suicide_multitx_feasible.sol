@@ -1,4 +1,4 @@
-pragma solidity 0.5.5;
+pragma solidity ^0.5.5;
 
 contract SuicideMultiTxFeasible {
     uint256 private initialized = 0;
