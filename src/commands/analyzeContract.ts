@@ -29,11 +29,20 @@ async function loginAndGetToken() {
 
 let contractNameOption: vscode.InputBoxOptions = {
 	prompt: "Contract Name: ",
-	placeHolder: "Contract Name"
+	placeHolder: "Contract Name",
+	ignoreFocusOut: true
 }
 
 export async function analyzeContract(): Promise<void> {
-	await getCompiler()
+	// await getCompiler()
+
+	await vscode.extensions.getExtension("JuanBlanco.solidity").activate().then(
+		(done) => {
+			vscode.commands.executeCommand("solidity.compile.active");
+			console.log(done, 'compilation worked')
+		},
+		(err) =>{ throw new Error(`Error with solc compilation. ${err}`) }
+	)
 
 	const waitFor = delay => new Promise(resolve => setTimeout(resolve, delay));
 
@@ -41,17 +50,21 @@ export async function analyzeContract(): Promise<void> {
 
 	await loginAndGetToken()
 
+	let contractName;
 
-	const contractName = await window.showInputBox(contractNameOption)
+	await window.showInputBox(contractNameOption).then(value => {
+			if (value === undefined) {
+					throw new Error('Contract Name cancelled. Please re-run analysis.');
+			}
+			contractName = value;
+	})
+		
 	
-	// await analyzeAst(contractName)
-
 	const fileContent = await getFileContent()
-
-	const contractData = await mythx.submitSourceCode(fileContent, contractName)
 	
-	window.showInformationMessage(`Start analysing smart contract ${window.activeTextEditor.document.fileName} `)
+	const contractData = await analyzeAst(contractName, `${window.activeTextEditor.document.fileName}`, fileContent)
 
+	// const contractData = await mythx.submitSourceCode(fileContent, contractName)
 
 	const {uuid} = contractData
 
@@ -59,7 +72,7 @@ export async function analyzeContract(): Promise<void> {
 	await window.withProgress(
 		{
 			location: vscode.ProgressLocation.Notification,
-			title: "Analysing smart contract",
+			title: `Analysing smart contract ${contractName}`,
 			cancellable: true
 		},
 		(_) => new Promise(
@@ -76,35 +89,67 @@ export async function analyzeContract(): Promise<void> {
 			}))
     
 	const analysisResult = await mythx.getDetectedIssues(uuid)
-
-	console.log(analysisResult)
+	console.log('result', analysisResult)
 
 	const { issues } = analysisResult[0];
-	console.log(issues.length)
 	vscode.window.showWarningMessage(`Mythx found ${issues.length} security warning with contract.`);
 
 	// Diagnostic
 	const collection = vscode.languages.createDiagnosticCollection('test');
 
-	errorCodeDiagnostic(vscode.window.activeTextEditor.document, collection, issues);
+	errorCodeDiagnostic(vscode.window.activeTextEditor.document, collection, analysisResult);
 }
 
-async function analyzeAst(contractName: string, fileName: string) {
+async function analyzeAst(contractName: string, filePath: string, fileContent) {
 	try {
-		const contractNameLow = contractName.toLowerCase()
-		console.log('analyzeAst', `${vscode.workspace.rootPath}/bin/${contractNameLow}-sol-output.json`)
-		const documentObj = await vscode.workspace.openTextDocument(`${vscode.workspace.rootPath}/bin/${contractNameLow}-sol-output.json`)
-		const content = JSON.parse(documentObj.getText());
-		// console.log(content, 'parsed')
-		// console.log(`${vscode.workspace.rootPath}/${contractName}.sol`, 'path')
-		const contract = content.contracts[`${vscode.workspace.rootPath}/${contractName}.sol`]
-		console.log(contract, 'contract')
-		const bytecode = contract.evm.bytecode;
-		const deployedBytecode = contract.evm.deployedBytecode;
+		const trimmed = filePath.split("/").pop().slice(0, -4)
+		const pathNoFileName = filePath.substring(0, filePath.lastIndexOf("/"));
+
+		const outputAST = `${pathNoFileName}/bin/${trimmed}-sol-output.json`
+
+		const documentObj = await vscode.workspace.openTextDocument(outputAST)
+		const compiled = JSON.parse(documentObj.getText());
+
+		const contract = compiled.contracts[filePath]
 		
-		console.log(bytecode, deployedBytecode)
+		const sources = compiled.sources
+		sources[filePath].source = fileContent
+
+		// Data to submit
+		const bytecodeObj = contract[contractName].evm.bytecode
+
+		let bytecode = bytecodeObj.object;
+
+		// Check if bytecode contains placeholder
+		if(bytecode.includes("__$")) {
+			bytecode = bytecode.replace(/__\$(.+)\$__/, (m,p) => Array(p.length).fill(0).join('') )
+		}
+
+		const sourceMap = bytecodeObj.sourceMap;
+
+		// const deployedBytecode = contract.evm.deployedBytecode;
+		
+		// console.log(bytecode, deployedBytecode)
+
+		const request = {
+				toolName: "mythx-vscode-extension",
+				contractName: contractName,
+				bytecode: bytecode,
+				sourceMap: sourceMap,
+				mainSource: filePath,
+				sources: sources,
+				sourceList: [filePath]
+		}
+		console.log(request, 'request')
+		const result = await mythx.analyze(
+			request
+		)
+
+		console.log(result)
+		return result
 	
 	} catch(err) {
-		vscode.window.showWarningMessage(`Mythx error with your request. ${err}`);
+		console.log(err, 'err')
+		vscode.window.showWarningMessage(`Mythx error with analysing your AST. ${err}`);
 	}
 }
