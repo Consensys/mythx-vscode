@@ -105,7 +105,7 @@ async function analyzeAst(contractName: string, filePath: string, fileContent) {
 		const trimmed = filePath.split("/").pop().slice(0, -4)
 		const pathNoFileName = filePath.substring(0, filePath.lastIndexOf("/"));
 
-		const outputAST = `${pathNoFileName}/bin/${trimmed}-sol-output.json`
+		const outputAST = `${pathNoFileName}/bin/${trimmed}-solc-output.json`
 
 		const documentObj = await vscode.workspace.openTextDocument(outputAST)
 		const compiled = JSON.parse(documentObj.getText());
@@ -117,28 +117,33 @@ async function analyzeAst(contractName: string, filePath: string, fileContent) {
 
 		// Data to submit
 		const bytecodeObj = contract[contractName].evm.bytecode
+		const deployedBytecodeObj = contract[contractName].evm.deployedBytecode
 
 		let bytecode = bytecodeObj.object;
+		const {sourceMap} = bytecodeObj;
+
+		const metadata = JSON.parse(contract[contractName].metadata)
+		const solcVersion = metadata.compiler.version
+
+		// const {metadata} = JSON.parse(contract[contractName])
+		// console.log(metadata.compiler.version, 'meta')
 
 		// Check if bytecode contains placeholder
 		if(bytecode.includes("__$")) {
 			bytecode = bytecode.replace(/__\$(.+)\$__/, (m,p) => Array(p.length).fill(0).join('') )
 		}
 
-		const sourceMap = bytecodeObj.sourceMap;
-
-		// const deployedBytecode = contract.evm.deployedBytecode;
-		
-		// console.log(bytecode, deployedBytecode)
-
 		const request = {
 				toolName: "mythx-vscode-extension",
 				contractName: contractName,
 				bytecode: bytecode,
 				sourceMap: sourceMap,
+				deployedBytecode: deployedBytecodeObj.object,
+				deployedSourceMap: deployedBytecodeObj.sourceMap,
 				mainSource: filePath,
 				sources: sources,
-				sourceList: [filePath]
+				sourceList: [filePath], // TODO: GET OBJECT KEYS,
+				solcVersion: solcVersion
 		}
 		console.log(request, 'request')
 		const result = await mythx.analyze(
