@@ -92,7 +92,10 @@ export async function analyzeContract(): Promise<void> {
 	console.log('result', analysisResult)
 
 	const { issues } = analysisResult[0];
-	vscode.window.showWarningMessage(`Mythx found ${issues.length} security warning with contract.`);
+	if(!issues) {
+		vscode.window.showInformationMessage(`No security issues found in your contract.`);
+	}
+	vscode.window.showWarningMessage(`Mythx found ${issues.length} security issues with contract.`);
 
 	// Diagnostic
 	const collection = vscode.languages.createDiagnosticCollection('test');
