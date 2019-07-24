@@ -9,7 +9,7 @@ import { AnalyzeOptions, Credentials } from "../utils/types"
 import {  getFileContent } from "../utils/getFileContent"
 import { getAstData } from '../utils/getAstData'
 
-const { window } = vscode
+const { window, languages } = vscode
 
 let mythx: Client;
 
@@ -87,7 +87,9 @@ export async function analyzeContract(): Promise<void> {
 	}
 
 	// Diagnostic
-	const collection = vscode.languages.createDiagnosticCollection('test');
+	console.log(languages.getDiagnostics())
+	const collection: vscode.DiagnosticCollection = languages.createDiagnosticCollection('mythx');
+	collection.clear()
 
 	errorCodeDiagnostic(vscode.window.activeTextEditor.document, collection, analysisResult);
 }

@@ -2,7 +2,6 @@ import * as vscode from "vscode";
 
 export function errorCodeDiagnostic(document: vscode.TextDocument, collection: vscode.DiagnosticCollection, analysisResult: Array<any>): void {
 	let diagnostics: vscode.Diagnostic[] = [];
-
 	analysisResult.map(
 		(entry) => {
 			entry.issues.map(
