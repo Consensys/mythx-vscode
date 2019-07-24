@@ -1,9 +1,14 @@
 {
-    "name": "vscode-mythx",
+    "name": "mythxvsc",
     "displayName": "VS Code for MythX",
     "description": "VS Code extension for MythX",
     "version": "0.1.0",
-    "publisher": "consensys",
+    "publisher": "mirkogarozzo",
+    "icon": "images/icon.png",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/ConsenSys/mythx-vscode"
+    },
     "engines": {
         "vscode": "^1.33.0-insider"
     },
@@ -16,6 +21,31 @@
     ],
     "main": "./out/extension.js",
     "contributes": {
+        "configuration": {
+            "title": "mythxvsc",
+            "properties": {
+                "mythxvsc.ethAddress": {
+                    "type": "string",
+                    "default": "0x0000000000000000000000000000000000000000",
+                    "description": "MythX EthAddress credential."
+                },
+                "mythxvsc.password": {
+                    "type": "string",
+                    "default": "trial",
+                    "description": "MythX password credential."
+                },
+                "mythxvsc.jwtAccess": {
+                    "type": "string",
+                    "default": "",
+                    "description": "MythX Access Token."
+                },
+                "mythxvsc.jwtRefresh": {
+                    "type": "string",
+                    "default": "",
+                    "description": "MythX Refresh Token"
+                }
+            }
+        },
         "commands": [
             {
                 "command": "mythx.analyzeContract",
@@ -61,7 +91,7 @@
     },
     "dependencies": {
         "fs-extra": "^7.0.1",
-        "mythxjs": "^1.1.0",
+        "mythxjs": "^1.3.1",
         "vscode-azureextensionui": "^0.23.3"
     },
     "extensionDependencies": [
