@@ -1,5 +1,4 @@
 import * as vscode from "vscode";
-import { issueObj } from './utils/types'
 
 export function errorCodeDiagnostic(document: vscode.TextDocument, collection: vscode.DiagnosticCollection, analysisResult: Array<any>): void {
 	let diagnostics: vscode.Diagnostic[] = [];
@@ -21,7 +20,6 @@ export function errorCodeDiagnostic(document: vscode.TextDocument, collection: v
 					const {decodedLocations} = issue
 					// TODO: all the below should be better extracted
 					if(decodedLocations) {
-						console.log(issue.swcID, 'inside')
 						decodedLocations.map(
 							locations => {
 								// vscode diagnostics starts from 0

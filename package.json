@@ -1,5 +1,5 @@
 {
-    "name": "vscode-mythx",
+    "name": "mythxvsc",
     "displayName": "VS Code for MythX",
     "description": "VS Code extension for MythX",
     "version": "0.1.0",
@@ -16,6 +16,31 @@
     ],
     "main": "./out/extension.js",
     "contributes": {
+        "configuration": {
+            "title": "mythxvsc",
+            "properties": {
+                "mythxvsc.ethAddress": {
+                    "type": "string",
+                    "default": "0x0000000000000000000000000000000000000000",
+                    "description": "MythX EthAddress credential."
+                },
+                "mythxvsc.password": {
+                    "type": "string",
+                    "default": "trial",
+                    "description": "MythX password credential."
+                },
+                "mythxvsc.jwtAccess": {
+                    "type": "string",
+                    "default": "",
+                    "description": "MythX Access Token."
+                },
+                "mythxvsc.jwtRefresh": {
+                    "type": "string",
+                    "default": "",
+                    "description": "MythX Refresh Token"
+                }
+            }
+        },
         "commands": [
             {
                 "command": "mythx.analyzeContract",

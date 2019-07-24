@@ -25,7 +25,6 @@ export interface AnalyzeOptions {
     analysisMode?: string
 }
 
-// TODO: Move this to types folder
 export interface SubmitContractRes {
     apiVersion: string
     harveyVersion: string
@@ -59,4 +58,16 @@ export interface issueObj {
     locations:Array<any>
     extra: any
     decodedLocations?:Array<Array<decodedLocationsObj>>
+}
+
+export interface Bytecode {
+    linkReferences: any
+    object: string
+    opcodes: string
+    sourceMap: string
+}
+
+export interface Credentials {
+    ethAddress: string
+    password: string
 }

@@ -4,3 +4,4 @@ package-lock.json
 .DS_Store
 bin/
 __contracts
+.vscode/**
