@@ -9,14 +9,14 @@ The extensions provides:
 
 ## Instructions
 
-After installing the extension please enter your registered MythX ethAddress and password in VSCode settings as shown in the screenshots below:
+After installing the extension please enter your registered MythX `ethAddress` and `password` in VSCode user settings. These fields are properties of `mythxvsc` as shown in the screenshots below:
 
 ![installation](images/screenshots/installation.png)
 ![user_settings](images/screenshots/user_settings.png)
 
-**Please note that the credentials stored this way are exposed to VSCode. Be sure to understand the security risk this could create or contact the extension developers if you don't. We are working on a more robust log-in implementation.**
+**Please note that the credentials stored this way are exposed to VSCode. Be sure to understand the security risk this entails or contact the extension developers if you don't. We are working on a more robust log-in implementation.**
 
-If no `ethAddress` and `password` provided the extension will fallback to use default trial `ethAddress` and `password` for MythX.
+If no `ethAddress` and `password` provided the extension will fallback to use default trial credentials for MythX.
 
 Now simply open a `.sol` file and click on the `MythX Analyze Smart Contract` button that you will see in the top right of your IDE window. Otherwise right click with your mouse on the contract name and you will see the Analyze command.
 
