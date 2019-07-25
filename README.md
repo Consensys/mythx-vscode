@@ -17,7 +17,7 @@ After installing the extension please enter your registered MythX ethAddress and
 
 If no log in is provided the extension will fallback to use default trial `ethAddress` and `password` for MythX.
 
-Now simply open a `.sol` file and click on the `MythX Analyze Smart Contract` button that you will see in the top right of your IDE window:
+Now simply open a `.sol` file and click on the `MythX Analyze Smart Contract` button that you will see in the top right of your IDE window. Otherwise right click with your mouse on the contract name.
 
 #####################ADD SCREESNSHOTS
 
@@ -28,6 +28,10 @@ Once solidity compilation is done you will be prompted to enter the name of the 
 Now you can just seat back and wait for MythX to do its magic :) Once analysis is over you will see your smart contract issues highlighted in your code. This should take no longer than three minutes.
 
 #####################ADD SCREESNSHOTS
+
+## Dependencies
+
+The MythXvsc extension depends on Juan Blanco [solidity extension](https://marketplace.visualstudio.com/items?itemName=JuanBlanco.solidity) and the Microsoft team [Azure Account extension](https://marketplace.visualstudio.com/items?itemName=ms-vscode.azure-account). Make sure you get both from Visual Studio Code Marketplace before installing MythXvsc.
 
 ## Known bugs
 
