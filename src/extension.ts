@@ -14,8 +14,6 @@ export async function activate(context: vscode.ExtensionContext) {
 
     diagnosticsCollection = vscode.languages.createDiagnosticCollection('mythx');
 
-
-
     vscode.commands.registerCommand("mythx.analyzeContract", () => {
         analyzeContract(diagnosticsCollection)
     });

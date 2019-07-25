@@ -9,7 +9,7 @@ import { AnalyzeOptions, Credentials } from "../utils/types"
 import {  getFileContent } from "../utils/getFileContent"
 import { getAstData } from '../utils/getAstData'
 
-const { window, languages } = vscode
+const { window } = vscode
 
 let mythx: Client;
 
@@ -20,12 +20,6 @@ let contractNameOption: vscode.InputBoxOptions = {
 }
 
 export async function analyzeContract(diagnosticCollection: vscode.DiagnosticCollection): Promise<void> {
-
-	let foo = languages.getDiagnostics(vscode.window.activeTextEditor.document.uri)
-	foo = []
-
-	// console.log(collection, 'aaaa')
-	// collection.set(vscode.window.activeTextEditor.document.uri, [])
 	let contractName;
 
 	await vscode.extensions.getExtension("JuanBlanco.solidity").activate().then(
