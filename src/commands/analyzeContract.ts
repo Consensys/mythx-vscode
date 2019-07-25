@@ -19,8 +19,13 @@ let contractNameOption: vscode.InputBoxOptions = {
 	ignoreFocusOut: true
 }
 
-export async function analyzeContract(): Promise<void> {
+export async function analyzeContract(diagnosticCollection: vscode.DiagnosticCollection): Promise<void> {
 
+	let foo = languages.getDiagnostics(vscode.window.activeTextEditor.document.uri)
+	foo = []
+
+	// console.log(collection, 'aaaa')
+	// collection.set(vscode.window.activeTextEditor.document.uri, [])
 	let contractName;
 
 	await vscode.extensions.getExtension("JuanBlanco.solidity").activate().then(
@@ -87,9 +92,7 @@ export async function analyzeContract(): Promise<void> {
 	}
 
 	// Diagnostic
-	console.log(languages.getDiagnostics())
-	const collection: vscode.DiagnosticCollection = languages.createDiagnosticCollection('mythx');
-	collection.clear()
 
-	errorCodeDiagnostic(vscode.window.activeTextEditor.document, collection, analysisResult);
+	errorCodeDiagnostic(vscode.window.activeTextEditor.document, diagnosticCollection, analysisResult);
+
 }

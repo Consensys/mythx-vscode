@@ -1,5 +1,6 @@
 import { workspace, WorkspaceConfiguration, Uri, ConfigurationTarget } from "vscode";
-import { extensionPrefix } from "./constants";
+
+export const extensionPrefix: string = 'mythx';
 
 export function getExtensionSetting<T>(key: string, fsPath?: string): T | undefined {
     const projectConfiguration: WorkspaceConfiguration = workspace.getConfiguration(extensionPrefix, fsPath ? Uri.file(fsPath): undefined);
