@@ -2,7 +2,7 @@
     "name": "mythxvsc",
     "displayName": "VS Code for MythX",
     "description": "VS Code extension for MythX",
-    "version": "0.2.3",
+    "version": "0.2.4",
     "publisher": "mirkogarozzo",
     "icon": "images/icon.png",
     "repository": {
