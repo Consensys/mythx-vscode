@@ -1,6 +1,6 @@
 {
     "name": "mythxvsc",
-    "displayName": "VS Code for MythX",
+    "displayName": "MythX for VSCode",
     "description": "VS Code extension for MythX",
     "version": "0.2.4",
     "publisher": "mirkogarozzo",
