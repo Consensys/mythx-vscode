@@ -11,8 +11,8 @@ The extensions provides:
 
 After installing the extension please enter your registered MythX ethAddress and password in VSCode settings as shown in the screenshots below:
 
-![Screenshot](images/screenshots/installation.png)
-![Screenshot](images/screenshots/user_settings.png)
+![installation](images/screenshots/installation.png)
+![user_settings](images/screenshots/user_settings.png)
 
 **Please note that the credentials stored this way are exposed to VSCode. Be sure to understand the security risk this could create or contact the extension developers if you don't. We are working on a more robust log-in implementation.**
 
@@ -20,17 +20,17 @@ If no `ethAddress` and `password` provided the extension will fallback to use de
 
 Now simply open a `.sol` file and click on the `MythX Analyze Smart Contract` button that you will see in the top right of your IDE window. Otherwise right click with your mouse on the contract name and you will see the Analyze command.
 
-![button_one](https://github.com/ConsenSys/mythx-vscode/tree/master/images/screenshots/button_one.png 'button_one')
-![right_click](https://github.com/ConsenSys/mythx-vscode/tree/master/images/screenshots/right_click.png 'right_click')
+![button_one](images/screenshots/button_one.png)
+![right_click](images/screenshots/right_click.png)
 
 Once solidity compilation is done you will be prompted to enter the name of the contract you want to analyze. It is very important that you enter the correct name or the API will return an error and your analysis will fail, so it is reccomended to just copy and paste the contract name from the code.
 
-![contract_name](https://github.com/ConsenSys/mythx-vscode/tree/master/images/screenshots/contract_name.png 'contract_name')
-![contract_name_two](https://github.com/ConsenSys/mythx-vscode/tree/master/images/screenshots/contract_name_two.png 'contract_name_two')
+![contract_name](images/screenshots/contract_name.png)
+![contract_name_two](images/screenshots/contract_name_two.png 'contract_name_two')
 
 Now you can just seat back and wait for MythX to do its magic :) Once analysis is over you will see your smart contract issues highlighted in your code. This should take no longer than three minutes.
 
-![finished_analysis](https://github.com/ConsenSys/mythx-vscode/tree/master/images/screenshots/finished_analysis.png 'finished_analysis')
+![finished_analysis](images/screenshots/finished_analysis.png 'finished_analysis')
 
 ## Dependencies
 
