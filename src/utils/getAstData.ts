@@ -8,21 +8,23 @@ export async function getAstData(contractName: string, filePath: string, fileCon
 
 		let folderPath = vscode.workspace.rootPath; // get the open folder path
 
-		// TODO: refactor getting file name
+		// Windows OS fix
+		const fixedPath = filePath.replace(/\\/g, '/') 
 
-		const trimmed = filePath.split("/").pop().slice(0, -4)
+		// TODO: refactor getting file name
+		const trimmed = fixedPath.split("/").pop().replace('.sol', '')
 
 		const outputAST = `${folderPath}/bin/${trimmed}-solc-output.json`
 
 		const documentObj = await vscode.workspace.openTextDocument(outputAST)
 		const compiled = JSON.parse(documentObj.getText());
 
-		const contract = compiled.contracts[filePath]
+		const contract = compiled.contracts[fixedPath]
 		
 		const sources = compiled.sources
 
 		// source is required by our API but does not exist in solc output
-		sources[filePath].source = fileContent
+		sources[fixedPath].source = fileContent
 
 		// Data to submit
 
@@ -41,7 +43,7 @@ export async function getAstData(contractName: string, filePath: string, fileCon
 				sourceMap: bytecode.sourceMap,
 				deployedBytecode: hasPlaceHolder(deployedBytecode.object),
 				deployedSourceMap: deployedBytecode.sourceMap,
-				mainSource: filePath,
+				mainSource: fixedPath,
 				sources: sources,
 				sourceList: Object.keys(compiled.sources),
 				solcVersion: solcVersion
@@ -50,7 +52,6 @@ export async function getAstData(contractName: string, filePath: string, fileCon
 		return request
 	
 	} catch(err) {
-		console.log(err, 'err')
-		vscode.window.showWarningMessage(`Mythx error with analysing your AST. ${err}`);
+		throw new Error(`Mythx error with analysing your AST. ${err}`)
 	}
 }
