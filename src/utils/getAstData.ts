@@ -1,26 +1,37 @@
 import * as vscode from "vscode";
-var os = require('os');
+const os = require('os');
+const path = require('path')
 
 import { Bytecode, AnalyzeOptions } from "../utils/types"
 import { hasPlaceHolder } from '../utils/hasPlaceHolder'
 
-export async function getAstData(contractName: string, filePath: string, fileContent): Promise<AnalyzeOptions>  {
+export async function getAstData(contractName: string, fileContent: string): Promise<AnalyzeOptions>  {
 	try {
-		let fixedPath = filePath;
+		let outputAST
+		let fixedPath = vscode.window.activeTextEditor.document.fileName;
+		const roothPath = vscode.workspace.rootPath;
+
+		const fileName = fixedPath.split("/").pop();
+		const fileNameTrimmed = fileName.replace('.sol', '')
 
 		// Windows OS hack
 		if(os.platform() === 'win32') {
-			fixedPath = filePath.replace(/\\/g, '/') 
+			fixedPath = fixedPath.replace(/\\/g, '/') 
 			if (fixedPath.charAt(0) === '/') {
 				fixedPath = fixedPath.substr(1);
 			}
 		}
 
-		// TODO: refactor getting file name
-		const trimmed = fixedPath.split("/").pop().replace('.sol', '')
 		const pathNoFileName = fixedPath.substring(0, fixedPath.lastIndexOf("/"));
 
-		const outputAST = `${pathNoFileName}/bin/${trimmed}-solc-output.json`
+		// Find differences between two path
+		const relativePath = path.relative(vscode.workspace.rootPath, pathNoFileName);
+
+		if(pathNoFileName === roothPath) {
+			outputAST = `${roothPath}/bin/${fileNameTrimmed}-solc-output.json`
+		} else {
+			outputAST = `${roothPath}/bin/${relativePath}/${fileNameTrimmed}-solc-output.json`
+		}
 
 		const documentObj = await vscode.workspace.openTextDocument(outputAST)
 		const compiled = JSON.parse(documentObj.getText());
@@ -32,7 +43,9 @@ export async function getAstData(contractName: string, filePath: string, fileCon
 		// source is required by our API but does not exist in solc output
 		sources[fixedPath].source = fileContent
 
-		// Data to submit
+		/*
+		 Data to submit
+		*/
 
 		// Bytecode
 		const bytecode: Bytecode = contract[contractName].evm.bytecode

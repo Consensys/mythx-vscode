@@ -50,7 +50,7 @@ export async function analyzeContract(diagnosticCollection: vscode.DiagnosticCol
 	
 	const fileContent = await getFileContent()
 	
-	const requestObj: AnalyzeOptions = await getAstData(contractName, `${window.activeTextEditor.document.fileName}`, fileContent)
+	const requestObj: AnalyzeOptions = await getAstData(contractName, fileContent)
 	
 	const analyzeRes = await mythx.analyze(
 		requestObj
