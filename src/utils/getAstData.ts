@@ -5,10 +5,14 @@ import { hasPlaceHolder } from '../utils/hasPlaceHolder'
 
 export async function getAstData(contractName: string, filePath: string, fileContent): Promise<AnalyzeOptions>  {
 	try {
-		const trimmed = filePath.split("/").pop().slice(0, -4)
-		const pathNoFileName = filePath.substring(0, filePath.lastIndexOf("/"));
 
-		const outputAST = `${pathNoFileName}/bin/${trimmed}-solc-output.json`
+		let folderPath = vscode.workspace.rootPath; // get the open folder path
+
+		// TODO: refactor getting file name
+
+		const trimmed = filePath.split("/").pop().slice(0, -4)
+
+		const outputAST = `${folderPath}/bin/${trimmed}-solc-output.json`
 
 		const documentObj = await vscode.workspace.openTextDocument(outputAST)
 		const compiled = JSON.parse(documentObj.getText());

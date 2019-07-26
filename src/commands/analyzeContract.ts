@@ -24,11 +24,12 @@ export async function analyzeContract(diagnosticCollection: vscode.DiagnosticCol
 
 	await vscode.extensions.getExtension("JuanBlanco.solidity").activate().then(
 		(done) => {
+			console.log('doneeee')
 			vscode.commands.executeCommand("solidity.compile.active");
 		},
-		(err) =>{ throw new Error(`Error with solc compilation. ${err}`) }
+		(err) =>{ throw new Error(`MythX: Error with solc compilation. ${err}`) }
 	)
-
+	
 	const waitFor = delay => new Promise(resolve => setTimeout(resolve, delay));
 
 	await waitFor(5000);
