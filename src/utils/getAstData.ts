@@ -11,9 +11,6 @@ export async function getAstData(contractName: string, fileContent: string): Pro
 		let fixedPath = vscode.window.activeTextEditor.document.fileName;
 		const roothPath = vscode.workspace.rootPath;
 
-		const fileName = fixedPath.split("/").pop();
-		const fileNameTrimmed = fileName.replace('.sol', '')
-
 		// Windows OS hack
 		if(os.platform() === 'win32') {
 			fixedPath = fixedPath.replace(/\\/g, '/') 
@@ -21,6 +18,10 @@ export async function getAstData(contractName: string, fileContent: string): Pro
 				fixedPath = fixedPath.substr(1);
 			}
 		}
+		
+		const fileName = fixedPath.split("/").pop();
+		const fileNameTrimmed = fileName.replace('.sol', '')
+
 
 		const pathNoFileName = fixedPath.substring(0, fixedPath.lastIndexOf("/"));
 
