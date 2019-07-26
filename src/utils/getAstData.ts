@@ -52,6 +52,7 @@ export async function getAstData(contractName: string, filePath: string, fileCon
 		return request
 	
 	} catch(err) {
+		vscode.window.showWarningMessage(`Mythx error with analysing your AST. ${err}`);
 		throw new Error(`Mythx error with analysing your AST. ${err}`)
 	}
 }
