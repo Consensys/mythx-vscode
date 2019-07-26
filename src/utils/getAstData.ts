@@ -8,8 +8,11 @@ export async function getAstData(contractName: string, filePath: string, fileCon
 
 		let folderPath = vscode.workspace.rootPath; // get the open folder path
 
-		// Windows OS fix
-		const fixedPath = filePath.replace(/\\/g, '/') 
+		// Windows OS hack
+		let fixedPath = filePath.replace(/\\/g, '/') 
+		if (fixedPath.charAt(0) === '/' && fixedPath.charAt(2) === ':') {
+            fixedPath = fixedPath.substr(1);
+        }
 
 		// TODO: refactor getting file name
 		const trimmed = fixedPath.split("/").pop().replace('.sol', '')
