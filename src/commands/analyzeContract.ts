@@ -19,12 +19,12 @@ let contractNameOption: vscode.InputBoxOptions = {
 	ignoreFocusOut: true
 }
 
-export async function analyzeContract(diagnosticCollection: vscode.DiagnosticCollection): Promise<void> {
+export async function analyzeContract(diagnosticCollection: vscode.DiagnosticCollection, uri: vscode.Uri): Promise<void> {
 	let contractName;
 
+	// TODO: throw errror if compilation fails 
 	await vscode.extensions.getExtension("JuanBlanco.solidity").activate().then(
 		(done) => {
-			console.log('doneeee')
 			vscode.commands.executeCommand("solidity.compile.active");
 		},
 		(err) =>{ throw new Error(`MythX: Error with solc compilation. ${err}`) }
@@ -50,7 +50,7 @@ export async function analyzeContract(diagnosticCollection: vscode.DiagnosticCol
 	
 	const fileContent = await getFileContent()
 	
-	const requestObj: AnalyzeOptions = await getAstData(contractName, `${window.activeTextEditor.document.fileName}`, fileContent)
+	const requestObj: AnalyzeOptions = await getAstData(contractName, uri.path, fileContent)
 	
 	const analyzeRes = await mythx.analyze(
 		requestObj
