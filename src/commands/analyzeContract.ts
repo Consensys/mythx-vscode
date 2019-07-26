@@ -19,7 +19,7 @@ let contractNameOption: vscode.InputBoxOptions = {
 	ignoreFocusOut: true
 }
 
-export async function analyzeContract(diagnosticCollection: vscode.DiagnosticCollection, uri: vscode.Uri): Promise<void> {
+export async function analyzeContract(diagnosticCollection: vscode.DiagnosticCollection): Promise<void> {
 	let contractName;
 
 	// TODO: throw errror if compilation fails 
@@ -50,7 +50,7 @@ export async function analyzeContract(diagnosticCollection: vscode.DiagnosticCol
 	
 	const fileContent = await getFileContent()
 	
-	const requestObj: AnalyzeOptions = await getAstData(contractName, uri.path, fileContent)
+	const requestObj: AnalyzeOptions = await getAstData(contractName, `${window.activeTextEditor.document.fileName}`, fileContent)
 	
 	const analyzeRes = await mythx.analyze(
 		requestObj

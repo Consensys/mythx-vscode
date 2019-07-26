@@ -1,23 +1,26 @@
 import * as vscode from "vscode";
+var os = require('os');
 
 import { Bytecode, AnalyzeOptions } from "../utils/types"
 import { hasPlaceHolder } from '../utils/hasPlaceHolder'
 
 export async function getAstData(contractName: string, filePath: string, fileContent): Promise<AnalyzeOptions>  {
 	try {
-
-		let folderPath = vscode.workspace.rootPath; // get the open folder path
+		let fixedPath = filePath;
 
 		// Windows OS hack
-		let fixedPath = filePath.replace(/\\/g, '/') 
-		if (fixedPath.charAt(0) === '/' && fixedPath.charAt(2) === ':') {
-            fixedPath = fixedPath.substr(1);
-        }
+		if(os.platform() === 'win32') {
+			fixedPath = filePath.replace(/\\/g, '/') 
+			if (fixedPath.charAt(0) === '/') {
+				fixedPath = fixedPath.substr(1);
+			}
+		}
 
 		// TODO: refactor getting file name
 		const trimmed = fixedPath.split("/").pop().replace('.sol', '')
+		const pathNoFileName = fixedPath.substring(0, fixedPath.lastIndexOf("/"));
 
-		const outputAST = `${folderPath}/bin/${trimmed}-solc-output.json`
+		const outputAST = `${pathNoFileName}/bin/${trimmed}-solc-output.json`
 
 		const documentObj = await vscode.workspace.openTextDocument(outputAST)
 		const compiled = JSON.parse(documentObj.getText());
