@@ -80,10 +80,15 @@ export async function analyzeContract(diagnosticCollection: vscode.DiagnosticCol
 	const analysisResult = await mythx.getDetectedIssues(uuid)
 
 	const { issues } = analysisResult[0];
-	if(!issues) {
+	
+	// Some warning have messages but no SWCID (like free trial user warn)
+	const filtered = issues.filter(
+		issue => issue.swcID !== ""
+	)
+	if(!filtered) {
 		vscode.window.showInformationMessage(`MythXvs: No security issues found in your contract.`);
 	} else {
-		vscode.window.showWarningMessage(`MythXvs: found ${issues.length} security issues with contract.`);
+		vscode.window.showWarningMessage(`MythXvs: found ${filtered.length} security issues with contract.`);
 	}
 
 	// Diagnostic
