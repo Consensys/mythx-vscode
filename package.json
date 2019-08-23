@@ -91,11 +91,9 @@
     },
     "dependencies": {
         "fs-extra": "^7.0.1",
-        "mythxjs": "^1.3.1",
-        "vscode-azureextensionui": "^0.23.3"
+        "mythxjs": "^1.3.1"
     },
     "extensionDependencies": [
-        "ms-vscode.azure-account",
         "JuanBlanco.solidity"
     ]
 }

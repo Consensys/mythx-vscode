@@ -4,22 +4,25 @@ export function errorCodeDiagnostic(document: vscode.TextDocument, collection: v
 	let diagnostics: vscode.Diagnostic[] = [];
 	analysisResult.map(
 		(entry) => {
-			entry.issues.map(
+			entry.issues
+			.map(
 				issue => {
 					let position = {
-							start: {
-									line: undefined,
-									column: undefined
-							},
-							end: {
-									line: undefined,
-									column: undefined
-							}
+						start: {
+								line: 0,
+								column: 0
+						},
+						end: {
+								line: 0,
+								column: 0
+						}
 					}
-					const {decodedLocations} = issue
+
 					// TODO: all the below should be better extracted
-					if(decodedLocations) {
-						decodedLocations.map(
+					if(issue.decodedLocations) {
+						const decodedLocationsFiltered = issue.decodedLocations.filter(
+							decodedLocation => decodedLocation.length > 0)
+						decodedLocationsFiltered.map(
 							locations => {
 								// vscode diagnostics starts from 0
 								position.start.line = locations[0].line - 1;
