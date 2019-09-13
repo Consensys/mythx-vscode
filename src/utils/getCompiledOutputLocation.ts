@@ -32,10 +32,22 @@ export function getCompiledOutputLocation(): void {
             outputAST = `${roothPath}/bin/${relativePath}/${fileNameTrimmed}-solc-output.json`
         }
 
+
+        let doesFileExist = setInterval(() => {
+            if(fs.existsSync(outputAST)) {
+                clearInterval(doesFileExist);
+            }
+        }, 2000);
+
+        // after 10 seconds we assume file was not compiled
+        setTimeout(() => { 
+            clearInterval(doesFileExist); console.log('stop timeout'); 
+        }, 10000);
+
         if (!fs.existsSync(outputAST)) {
             throw new Error('Error with compiling the contract! Please try again or contact us.');
         }
-    }
+    }        
     catch(err) {
         console.error(err)
     }
