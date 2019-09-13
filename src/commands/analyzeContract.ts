@@ -8,6 +8,7 @@ import { errorCodeDiagnostic } from '../errorCodeDiagnostic'
 import { AnalyzeOptions, Credentials } from "../utils/types"
 import {  getFileContent } from "../utils/getFileContent"
 import { getAstData } from '../utils/getAstData'
+import { getCompiledOutputLocation } from '../utils/getCompiledOutputLocation'
 
 const { window } = vscode
 
@@ -32,7 +33,9 @@ export async function analyzeContract(diagnosticCollection: vscode.DiagnosticCol
 	
 	const waitFor = delay => new Promise(resolve => setTimeout(resolve, delay));
 
-	await waitFor(5000);
+	await waitFor(7000);
+	
+	getCompiledOutputLocation()
 
 	const credentials: Credentials = await getCredentials()
 
@@ -42,7 +45,7 @@ export async function analyzeContract(diagnosticCollection: vscode.DiagnosticCol
 
 	await window.showInputBox(contractNameOption).then(value => {
 			if (value === undefined) {
-					throw new Error('Contract Name cancelled. Please re-run analysis.');
+				throw new Error('Contract Name cancelled. Please re-run analysis.');
 			}
 			contractName = value;
 	})
