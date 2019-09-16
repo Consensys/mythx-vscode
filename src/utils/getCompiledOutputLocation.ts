@@ -3,9 +3,9 @@ const os = require('os');
 const path = require('path')
 const fs = require('fs');
 
-export function getCompiledOutputLocation(): void {
+export function getCompiledOutputLocation(): string {
     try {
-        let outputAST
+        let outputAST: string
         let fixedPath = vscode.window.activeTextEditor.document.fileName;
         const roothPath = vscode.workspace.rootPath;
     
@@ -32,23 +32,9 @@ export function getCompiledOutputLocation(): void {
             outputAST = `${roothPath}/bin/${relativePath}/${fileNameTrimmed}-solc-output.json`
         }
 
-
-        let doesFileExist = setInterval(() => {
-            if(fs.existsSync(outputAST)) {
-                clearInterval(doesFileExist);
-            }
-        }, 2000);
-
-        // after 10 seconds we assume file was not compiled
-        setTimeout(() => { 
-            clearInterval(doesFileExist); console.log('stop timeout'); 
-        }, 10000);
-
-        if (!fs.existsSync(outputAST)) {
-            throw new Error('Error with compiling the contract! Please try again or contact us.');
-        }
+        return outputAST;
     }        
     catch(err) {
-        console.error(err)
+        throw  new Error(`MythXvsc problem with getting compiled location: ${err}`)
     }
 }

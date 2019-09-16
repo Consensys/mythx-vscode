@@ -40,7 +40,6 @@ The MythXvsc extension depends on Juan Blanco [solidity extension](https://marke
 
 ## Known bugs
 
--   If compilation fails the "Insert Contract Name" popup still appears and the extension tries to go ahead with analysis submission.
 -   Analysis fails straight away on some contract. This is most likely caused by the API not digesting some input. Please contact the extension developer with a copy of the smart contract in order for us to investigate further.
 
 ## Features that will be implemented in the future
