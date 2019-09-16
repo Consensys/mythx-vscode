@@ -102,6 +102,7 @@ export async function analyzeContract(diagnosticCollection: vscode.DiagnosticCol
 	setTimeout(() => { 
 		clearInterval(doesFileExist);
 		if (!fs.existsSync(compiledLocation)) {
+			vscode.window.showWarningMessage(`MythXvsc: 'Error with compiling the contract! Please try again or contact us.'`);
 			throw new Error('Error with compiling the contract! Please try again or contact us.');
 		}
 	}, 10000);
