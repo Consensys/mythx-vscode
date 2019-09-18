@@ -1,5 +1,3 @@
-**Please note that the extension is still in beta version.**
-
 MythXvsc is an extension for running MythX smart contract analysis from your favourite IDE.
 
 The extensions provides:
