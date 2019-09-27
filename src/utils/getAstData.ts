@@ -9,7 +9,7 @@ export async function getAstData(contractName: string, fileContent: string): Pro
 	try {
 		let outputAST
 		let fixedPath = vscode.window.activeTextEditor.document.fileName;
-		const roothPath = vscode.workspace.rootPath;
+		const rootPath = vscode.workspace.workspaceFolders[0].uri.fsPath;
 
 		// Windows OS hack
 		if(os.platform() === 'win32') {
@@ -26,13 +26,13 @@ export async function getAstData(contractName: string, fileContent: string): Pro
 		const pathNoFileName = fixedPath.substring(0, fixedPath.lastIndexOf("/"));
 
 		// Find differences between two path
-		const relativePath = path.relative(vscode.workspace.rootPath, pathNoFileName);
+		const relativePath = path.relative(rootPath, pathNoFileName);
 
-		if(pathNoFileName === roothPath) {
-			outputAST = `${roothPath}/bin/${fileNameTrimmed}-solc-output.json`
-		} else {
-			outputAST = `${roothPath}/bin/${relativePath}/${fileNameTrimmed}-solc-output.json`
-		}
+		if (pathNoFileName === rootPath) {
+            outputAST = path.join(rootPath, 'bin', `${fileNameTrimmed}-solc-output.json`);
+        } else {
+            outputAST =  path.join(rootPath, 'bin', relativePath, `${fileNameTrimmed}-solc-output.json`);
+        }
 
 		const documentObj = await vscode.workspace.openTextDocument(outputAST)
 		const compiled = JSON.parse(documentObj.getText());
@@ -57,16 +57,16 @@ export async function getAstData(contractName: string, fileContent: string): Pro
 		const solcVersion = metadata.compiler.version
 
 		const request: AnalyzeOptions = {
-				toolName: "mythx-vscode-extension",
-				contractName: contractName,
-				bytecode: hasPlaceHolder(bytecode.object),
-				sourceMap: bytecode.sourceMap,
-				deployedBytecode: hasPlaceHolder(deployedBytecode.object),
-				deployedSourceMap: deployedBytecode.sourceMap,
-				mainSource: fixedPath,
-				sources: sources,
-				sourceList: Object.keys(compiled.sources),
-				solcVersion: solcVersion
+			toolName: "mythx-vscode-extension",
+			contractName: contractName,
+			bytecode: hasPlaceHolder(bytecode.object),
+			sourceMap: bytecode.sourceMap,
+			deployedBytecode: hasPlaceHolder(deployedBytecode.object),
+			deployedSourceMap: deployedBytecode.sourceMap,
+			mainSource: fixedPath,
+			sources: sources,
+			sourceList: Object.keys(compiled.sources),
+			solcVersion: solcVersion
 		}
 
 		return request

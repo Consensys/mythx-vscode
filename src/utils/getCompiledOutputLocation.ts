@@ -7,7 +7,7 @@ export function getCompiledOutputLocation(): string {
     try {
         let outputAST: string
         let fixedPath = vscode.window.activeTextEditor.document.fileName;
-        const roothPath = vscode.workspace.rootPath;
+        const rootPath = vscode.workspace.workspaceFolders[0].uri.fsPath;
     
         // Windows OS hack
         if(os.platform() === 'win32') {
@@ -20,16 +20,15 @@ export function getCompiledOutputLocation(): string {
         const fileName = fixedPath.split("/").pop();
         const fileNameTrimmed = fileName.replace('.sol', '')
     
-    
         const pathNoFileName = fixedPath.substring(0, fixedPath.lastIndexOf("/"));
     
         // Find differences between two path
         const relativePath = path.relative(vscode.workspace.rootPath, pathNoFileName);
     
-        if(pathNoFileName === roothPath) {
-            outputAST = `${roothPath}/bin/${fileNameTrimmed}-solc-output.json`
+        if (pathNoFileName === rootPath) {
+            outputAST = path.join(rootPath, 'bin', `${fileNameTrimmed}-solc-output.json`);
         } else {
-            outputAST = `${roothPath}/bin/${relativePath}/${fileNameTrimmed}-solc-output.json`
+            outputAST =  path.join(rootPath, 'bin', relativePath, `${fileNameTrimmed}-solc-output.json`);
         }
 
         return outputAST;
