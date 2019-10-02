@@ -23,10 +23,9 @@ Now simply open a `.sol` file and click on the `MythX Analyze Smart Contract` bu
 ![button_one](images/screenshots/button_one.png)
 ![right_click](images/screenshots/right_click.png)
 
-Once solidity compilation is done you will be prompted to enter the name of the contract you want to analyze. It is very important that you enter the correct name or the API will return an error and your analysis will fail, so it is reccomended to just copy and paste the contract name from the code.
+Once solidity compilation is done you will be prompted to enter the name of the contract you want to analyze from a list of contracts found in the solidity file. It is very important that you pick the main contract name or the API will return an error and your analysis will fail.
 
-![contract_name](images/screenshots/contract_name.png)
-![contract_name_two](images/screenshots/contract_name_two.png 'contract_name_two')
+![contract_name](images/screenshots/contract_picker.png)
 
 Now you can just seat back and wait for MythX to do its magic :) Once analysis is over you will see your smart contract issues highlighted in your code. This should take no longer than three minutes.
 
