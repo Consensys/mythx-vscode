@@ -17,7 +17,7 @@ let contractNameOption: vscode.InputBoxOptions = {
 	ignoreFocusOut: true
 }
 
-export async function analyzeContract(diagnosticCollection: vscode.DiagnosticCollection): Promise<void> {
+export async function analyzeContract(diagnosticCollection: vscode.DiagnosticCollection, fileUri: vscode.Uri): Promise<void> {
 	let contractName;
 
 	// TODO: throw errror if compilation fails 
@@ -33,15 +33,19 @@ export async function analyzeContract(diagnosticCollection: vscode.DiagnosticCol
 
 						await mythx.login();
 
-						await window.showInputBox(contractNameOption).then(value => {
-							if (value === undefined) {
+						const fileContent = await getFileContent(fileUri)
+
+						// Get contract names array for dropdown
+						const contractNames = fileContent.match(/(?<=contract\s)(\w+)(?=\s*{)/g);
+
+						await window.showQuickPick(contractNames).then(
+							value => {
+								if(value === undefined) {
 									throw new Error('Contract Name cancelled. Please re-run analysis.');
+								}
+								contractName = value;
 							}
-							contractName = value;
-						});
-
-
-						const fileContent = await getFileContent();
+						)
 
 						const requestObj: AnalyzeOptions = await getAstData(contractName, fileContent);
 
@@ -53,16 +57,16 @@ export async function analyzeContract(diagnosticCollection: vscode.DiagnosticCol
 
 						// Get in progress bar
 						await window.withProgress(
-							{
-								cancellable: true,
-								location: vscode.ProgressLocation.Notification,
-								title: `Analysing smart contract ${contractName}`,
+						{
+							cancellable: true,
+							location: vscode.ProgressLocation.Notification,
+							title: `Analysing smart contract ${contractName}`,
 
-							},
-							(_) => new Promise(
-						(resolve) => {
-							// Handle infinite queue
-							const timer = setInterval(async () => {
+						},
+						(_) => new Promise(
+							(resolve) => {
+								// Handle infinite queue
+								const timer = setInterval(async () => {
 								const analysis = await mythx.getAnalysisStatus(uuid);
 								if (analysis.status === 'Finished') {
 									clearInterval(timer);
@@ -87,8 +91,8 @@ export async function analyzeContract(diagnosticCollection: vscode.DiagnosticCol
 						}
 
 						// Diagnostic
-					errorCodeDiagnostic(vscode.window.activeTextEditor.document, diagnosticCollection, analysisResult);
-							}
+						errorCodeDiagnostic(vscode.window.activeTextEditor.document, diagnosticCollection, analysisResult);
+					}
 				}
 			)
 		},
