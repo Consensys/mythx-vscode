@@ -38,7 +38,10 @@ export async function analyzeContract(diagnosticCollection: vscode.DiagnosticCol
 						// Get contract names array for dropdown
 						const contractNames = fileContent.match(/(?<=contract\s)(\w+)(?=\s*{)/g);
 
-						await window.showQuickPick(contractNames).then(
+						await window.showQuickPick(contractNames, {
+							canPickMany: false,
+							placeHolder: 'Contract Name (please select main contract):'
+						}).then(
 							value => {
 								if(value === undefined) {
 									throw new Error('Contract Name cancelled. Please re-run analysis.');
