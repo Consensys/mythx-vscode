@@ -17,7 +17,8 @@
         "Other"
     ],
     "activationEvents": [
-        "onCommand:mythx.analyzeContract"
+        "onCommand:mythx.analyzeContract",
+        "onCommand:mythx.runFullMode"
     ],
     "main": "./out/extension.js",
     "contributes": {
@@ -50,6 +51,10 @@
             {
                 "command": "mythx.analyzeContract",
                 "title": "MythX: Analyze smart contract"
+            },
+            {
+                "command": "mythx.runFullMode",
+                "title": "MythX: Run Full Mode Analysis"
             }
         ],
         "menus": {
@@ -57,6 +62,10 @@
                 {
                     "when": "resourceLangId == solidity",
                     "command": "mythx.analyzeContract"
+                },
+                {
+                    "when": "resourceLangId == solidity",
+                    "command": "mythx.runFullMode"
                 }
             ],
             "explorer/context": [

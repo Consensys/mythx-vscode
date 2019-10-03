@@ -20,7 +20,6 @@ let contractNameOption: vscode.InputBoxOptions = {
 export async function analyzeContract(diagnosticCollection: vscode.DiagnosticCollection, fileUri: vscode.Uri): Promise<void> {
 	let contractName;
 
-	// TODO: throw errror if compilation fails 
 	await vscode.extensions.getExtension("JuanBlanco.solidity").activate().then(
 		async (active) => {
 			vscode.commands.executeCommand("solidity.compile.active").then(
@@ -57,6 +56,10 @@ export async function analyzeContract(diagnosticCollection: vscode.DiagnosticCol
 						);
 
 						const {uuid} = analyzeRes;
+						// vscode.window.showInformationMessage(
+						// 	`Your analysis has been submitted! Please see your results at
+						// 	https://dashboard.mythx.io/#/console/analyses/${uuid}`
+						// )
 
 						// Get in progress bar
 						await window.withProgress(

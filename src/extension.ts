@@ -1,6 +1,7 @@
 import * as vscode from "vscode";
 import { ext } from "./extensionVariables";
 import { analyzeContract } from "./commands/analyzeContract";
+import { runFullMode } from "./commands/runFullMode";
 
 
 let diagnosticsCollection: vscode.DiagnosticCollection
@@ -13,5 +14,9 @@ export async function activate(context: vscode.ExtensionContext) {
 
     vscode.commands.registerCommand("mythx.analyzeContract", async (fileUri: vscode.Uri) => {
         analyzeContract(diagnosticsCollection, fileUri)
+    });
+
+    vscode.commands.registerCommand("mythx.runFullMode", async () => {
+        runFullMode(vscode.window.activeTextEditor.document.uri.fsPath)
     });
 }

@@ -5,7 +5,7 @@ const path = require('path')
 import { Bytecode, AnalyzeOptions } from "../utils/types"
 import { hasPlaceHolder } from '../utils/hasPlaceHolder'
 
-export async function getAstData(contractName: string, fileContent: string): Promise<AnalyzeOptions>  {
+export async function getAstData(contractName: string, fileContent: string, analysisMode: string = 'quick'): Promise<AnalyzeOptions>  {
 	try {
 		let outputAST
 		let fixedPath = vscode.window.activeTextEditor.document.fileName;
@@ -56,18 +56,18 @@ export async function getAstData(contractName: string, fileContent: string): Pro
 		const metadata = JSON.parse(contract[contractName].metadata)
 		const solcVersion = metadata.compiler.version
 
-		const request: AnalyzeOptions = {
-			toolName: "mythx-vscode-extension",
-			contractName: contractName,
-			bytecode: hasPlaceHolder(bytecode.object),
-			sourceMap: bytecode.sourceMap,
-			deployedBytecode: hasPlaceHolder(deployedBytecode.object),
-			deployedSourceMap: deployedBytecode.sourceMap,
-			mainSource: fixedPath,
-			sources: sources,
-			sourceList: Object.keys(compiled.sources),
-			solcVersion: solcVersion
-		}
+		// TODO: EXTRACT OUT CREATEANALYZEREQUEST
+
+		const request = createAnalyzeRequest(
+			contractName,
+			bytecode,
+			deployedBytecode,
+			fixedPath,
+			sources,
+			compiled,
+			solcVersion,
+			analysisMode
+		)
 
 		return request
 	
@@ -75,4 +75,24 @@ export async function getAstData(contractName: string, fileContent: string): Pro
 		vscode.window.showWarningMessage(`Mythx error with analysing your AST. ${err}`);
 		throw new Error(`Mythx error with analysing your AST. ${err}`)
 	}
+}
+
+
+// TODO: MOVE BELOW TO DIFFERENT FILE
+
+function createAnalyzeRequest (contractName, bytecode, deployedBytecode, fixedPath, sources, compiled, solcVersion, analysisMode): AnalyzeOptions {
+	return {
+		toolName: "mythx-vscode-extension",
+		contractName: contractName,
+		bytecode: hasPlaceHolder(bytecode.object),
+		sourceMap: bytecode.sourceMap,
+		deployedBytecode: hasPlaceHolder(deployedBytecode.object),
+		deployedSourceMap: deployedBytecode.sourceMap,
+		mainSource: fixedPath,
+		sources: sources,
+		sourceList: Object.keys(compiled.sources),
+		solcVersion: solcVersion,
+		analysisMode: analysisMode
+	}
+
 }
