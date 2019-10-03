@@ -11,11 +11,6 @@ import { getAstData } from '../utils/getAstData'
 
 const { window } = vscode
 let mythx: Client
-let contractNameOption: vscode.InputBoxOptions = {
-	prompt: "Contract Name: ",
-	placeHolder: "Contract Name",
-	ignoreFocusOut: true
-}
 
 export async function analyzeContract(diagnosticCollection: vscode.DiagnosticCollection, fileUri: vscode.Uri): Promise<void> {
 	let contractName;
@@ -56,11 +51,7 @@ export async function analyzeContract(diagnosticCollection: vscode.DiagnosticCol
 						);
 
 						const {uuid} = analyzeRes;
-						// vscode.window.showInformationMessage(
-						// 	`Your analysis has been submitted! Please see your results at
-						// 	https://dashboard.mythx.io/#/console/analyses/${uuid}`
-						// )
-
+						
 						// Get in progress bar
 						await window.withProgress(
 						{

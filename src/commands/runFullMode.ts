@@ -4,16 +4,10 @@ import { Client } from "mythxjs"
 import { getCredentials } from "../login/getCredentials"
 
 import { AnalyzeOptions, Credentials } from "../utils/types"
-import {  getFileContent } from "../utils/getFileContent"
 import { getAstData } from '../utils/getAstData'
 
 const { window } = vscode
 let mythx: Client
-let contractNameOption: vscode.InputBoxOptions = {
-	prompt: "Contract Name: ",
-	placeHolder: "Contract Name",
-	ignoreFocusOut: true
-}
 
 export async function runFullMode(fileUri: string): Promise<void> {
 	let contractName;
@@ -31,7 +25,7 @@ export async function runFullMode(fileUri: string): Promise<void> {
 						await mythx.login();
 
 						const documentObj = await vscode.workspace.openTextDocument(fileUri)
-    						const fileContent = documentObj.getText();
+    					const fileContent = documentObj.getText();
 
 						// Get contract names array for dropdown
 						const contractNames = fileContent.match(/(?<=contract\s)(\w+)(?=\s*{)/g);
