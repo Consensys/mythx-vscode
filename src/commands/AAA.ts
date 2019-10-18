@@ -12,7 +12,7 @@ import { getAstData } from '../utils/getAstData'
 const { window } = vscode
 let mythx: Client
 
-export async function analyzeContract(diagnosticCollection: vscode.DiagnosticCollection, fileUri: vscode.Uri): Promise<void> {
+export async function AAA(diagnosticCollection: vscode.DiagnosticCollection, fileUri: any): Promise<void> {
 	let contractName;
 
 	await vscode.extensions.getExtension("JuanBlanco.solidity").activate().then(
@@ -27,9 +27,10 @@ export async function analyzeContract(diagnosticCollection: vscode.DiagnosticCol
 							mythx = new Client(credentials.ethAddress, credentials.password, 'mythXvsc');
 	
 							await mythx.login();
-							
-							console.log(fileUri)
-							const fileContent = await getFileContent(fileUri)
+	
+                            const fileContent = await getFileContent(fileUri)
+                            
+                            console.log(fileContent, 'fff')
 	
 							// Get contract names array for dropdown
 							const contractNames = fileContent.match(/(?<=contract\s)(\w+)(?=\s*{)/g);
@@ -90,7 +91,8 @@ export async function analyzeContract(diagnosticCollection: vscode.DiagnosticCol
 							}
 	
 							// Diagnostic
-							errorCodeDiagnostic(vscode.window.activeTextEditor.document, diagnosticCollection, analysisResult);
+                            errorCodeDiagnostic(vscode.window.activeTextEditor.document, diagnosticCollection, analysisResult);
+                            return;
 						}
 					} catch(err) {
 						vscode.window.showErrorMessage(
