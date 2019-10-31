@@ -52,6 +52,12 @@ export async function analyzeContract(diagnosticCollection: vscode.DiagnosticCol
 							);
 	
 							const {uuid} = analyzeRes;
+							vscode.window.showInformationMessage(
+								`Your analysis has been submitted! Wait for vscode linting or see detailed results at
+								https://dashboard.mythx.io/#/console/analyses/${uuid}`, 'Dismiss'
+							).then(
+								x => {return}
+							)
 	
 							// Get in progress bar
 							await window.withProgress(
