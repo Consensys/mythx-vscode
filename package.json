@@ -35,22 +35,21 @@
                     "default": "trial",
                     "description": "MythX password credential."
                 },
-                "mythxvsc.jwtAccess": {
+                "mythxvsc.environment": {
                     "type": "string",
-                    "default": "",
-                    "description": "MythX Access Token."
-                },
-                "mythxvsc.jwtRefresh": {
-                    "type": "string",
-                    "default": "",
-                    "description": "MythX Refresh Token"
+                    "default": "https://api.mythx.io/v1/",
+                    "description": "MythX environment."
                 }
             }
         },
         "commands": [
             {
                 "command": "mythx.analyzeContract",
-                "title": "MythX: Analyze smart contract"
+                "title": "MythX: Analyze smart contract",
+                "icon": {
+                    "light": "images/mythx-grey.svg",
+                    "dark": "images/mythx-light-grey.svg"
+                }
             },
             {
                 "command": "mythx.runFullMode",

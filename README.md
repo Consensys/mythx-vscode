@@ -18,9 +18,10 @@ After installing the extension please enter your registered MythX `ethAddress` a
 
 If no `ethAddress` and `password` provided the extension will fallback to use default trial credentials for MythX.
 
-Now simply open a `.sol` file and click on the `MythX Analyze Smart Contract` button that you will see in the top right of your IDE window. Otherwise right click with your mouse on the contract name and you will see the Analyze command.
+Now simply open a `.sol` file and click on the MythX icon that you will see in the top right of your IDE window. Otherwise right click with your mouse on the contract name and you will see the Analyze command.
+A third option is to run the command pallete (CMD+SHIFT+P on Mac or equivalent) and look for the `MythX: Analyze smart contract` command.
 
-![button_one](images/screenshots/button_one.png)
+![button_one](images/screenshots/button_mythx.png)
 ![right_click](images/screenshots/right_click.png)
 
 Once solidity compilation is done you will be prompted to enter the name of the contract you want to analyze from a list of contracts found in the solidity file. It is very important that you pick the main contract name or the API will return an error and your analysis will fail.

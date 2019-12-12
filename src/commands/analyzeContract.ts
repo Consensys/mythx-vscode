@@ -24,7 +24,13 @@ export async function analyzeContract(diagnosticCollection: vscode.DiagnosticCol
 							throw new Error(`MythX: Error with solc compilation.`)
 						} else {
 							const credentials: Credentials = await getCredentials();
-							mythx = new Client(credentials.ethAddress, credentials.password, 'mythXvsc');
+							const projectConfiguration: vscode.WorkspaceConfiguration = vscode.workspace.getConfiguration('mythxvsc');
+							let environment: string = 'https://api.mythx.io/v1/"'
+							if(projectConfiguration.environment) {
+								environment = projectConfiguration.environment
+							}
+
+							mythx = new Client(credentials.ethAddress, credentials.password, 'mythXvsc', environment);
 
 							await mythx.login();
 
