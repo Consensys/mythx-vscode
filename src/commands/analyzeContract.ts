@@ -13,7 +13,7 @@ import { getContractName } from "../utils/getContractName";
 const { window } = vscode
 let mythx: Client
 
-export async function analyzeContract(diagnosticCollection: vscode.DiagnosticCollection, fileUri: vscode.Uri): Promise<void> {
+export async function analyzeContract(diagnosticCollection: vscode.DiagnosticCollection, fileUri): Promise<void> {
 
 	await vscode.extensions.getExtension("JuanBlanco.solidity").activate().then(
 		async (active) => {

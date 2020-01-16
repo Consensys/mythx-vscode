@@ -6,8 +6,10 @@ export async function getContractName(fileUri: vscode.Uri): Promise<string>  {
 	try {
         let outputAST
         let contractName
-		let fixedPath = fileUri.fsPath;
+		let fixedPath;
 		const rootPath = vscode.workspace.workspaceFolders[0].uri.fsPath;
+
+		fileUri.fsPath ? fixedPath = fileUri.fsPath : fixedPath = fileUri.path
 
 		// Windows OS hack
 		if(os.platform() === 'win32') {
@@ -16,7 +18,7 @@ export async function getContractName(fileUri: vscode.Uri): Promise<string>  {
 				fixedPath = fixedPath.substr(1);
 			}
 		}
-		
+		console.log(fixedPath, 'getContact fixedPath')
 		const fileName = fixedPath.split("/").pop();
 		const fileNameTrimmed = fileName.replace('.sol', '')
 
