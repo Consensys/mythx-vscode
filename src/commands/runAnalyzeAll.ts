@@ -30,7 +30,7 @@ export async function runAnalyzeAll(diagnosticCollection): Promise<void> {
                     vscode.window.showWarningMessage('Please open a folder in Visual Studio Code as a workspace');
                     return;
                 } else {
-                    vscode.window.showWarningMessage('Starting analyzing all files');
+                    vscode.window.showInformationMessage('Starting analyzing all files');
                     let solidityPath = '**/*.sol';
                     let excludePath = '**/bin/**';
 
