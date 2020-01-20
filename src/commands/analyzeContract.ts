@@ -36,11 +36,7 @@ export async function analyzeContract(diagnosticCollection: vscode.DiagnosticCol
 
 							const fileContent = await getFileContent(fileUri)
 
-							// Get contract names array for dropdown
-							// const contractNames = fileContent.match(/(?<=contract\s)(\w+)(?=\s*{)/g);
-
 							const contractName = await getContractName(fileUri)
-
 
 							const requestObj: AnalyzeOptions = await getAstData(contractName, fileContent);
 
