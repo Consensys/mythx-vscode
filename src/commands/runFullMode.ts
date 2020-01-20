@@ -43,7 +43,7 @@ export async function runFullMode(fileUri: string): Promise<void> {
 									}
 								)
 		
-								const requestObj: AnalyzeOptions = await getAstData(contractName, fileContent, 'full');
+								const requestObj: AnalyzeOptions = await getAstData(contractName, fileContent, 'deep');
 								const analyzeRes = await mythx.analyze(
 									requestObj,
 								);
