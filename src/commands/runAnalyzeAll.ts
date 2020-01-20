@@ -61,7 +61,7 @@ export async function runAnalyzeAll(diagnosticCollection): Promise<void> {
                                             const contracts = Object.keys(contract)
 
                                             if (contracts.length === 0) {
-                                                    throw new Error('No contracts found');
+                                                throw new Error('No contracts found');
                                             } else if (contracts.length === 1) {
                                                 contractName = Object.keys(contract)[0];
                                                 data = contract[contractName];
