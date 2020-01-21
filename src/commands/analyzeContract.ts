@@ -36,6 +36,8 @@ export async function analyzeContract(diagnosticCollection: vscode.DiagnosticCol
 
 							const fileContent = await getFileContent(fileUri)
 
+							
+
 							const contractName = await getContractName(fileUri)
 
 							const requestObj: AnalyzeOptions = await getAstData(contractName, fileContent);

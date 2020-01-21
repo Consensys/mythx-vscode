@@ -36,18 +36,26 @@ export async function getContractName(fileUri: vscode.Uri): Promise<string>  {
 		const compiled = JSON.parse(documentObj.getText());
 
         const contract = compiled.contracts[fixedPath]
-        const contractsNames = Object.keys(contract);
-		await vscode.window.showQuickPick(contractsNames, {
-			canPickMany: false,
-			placeHolder: 'Contract Name (please select main contract):'
-		}).then(
-			value => {
-				if(value === undefined) {
-					throw new Error('Contract Name cancelled. Please re-run analysis.');
+		const contracts = Object.keys(contract);
+		
+		if (contracts.length === 0) {
+			throw new Error('No contracts found');
+		} else if (contracts.length === 1) {
+			contractName = Object.keys(contract)[0];
+		} else {
+			await vscode.window.showQuickPick(contracts, {
+				canPickMany: false,
+				placeHolder: 'Contract Name (please select main contract):'
+			}).then(
+				value => {
+					if(value === undefined) {
+						throw new Error('Contract Name cancelled. Please re-run analysis.');
+					}
+					contractName = value;
 				}
-				contractName = value;
-			}
-        )
+			)
+		}
+
         return contractName;
 
     } catch(err) {
