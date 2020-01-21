@@ -55,8 +55,9 @@ export async function getAstData(contractName: string, fileContent: string, anal
 		const metadata = JSON.parse(contract[contractName].metadata)
 		const solcVersion = metadata.compiler.version
 
-		const mainSource = 
-		convertAbsoluteToRelativePath(rootPath, fixedPath)
+
+		// TODO: ADD THIS TO request object
+		// const mainSource = convertAbsoluteToRelativePath(rootPath, fixedPath)
 
 		// TODO: EXTRACT OUT CREATEANALYZEREQUEST
 
@@ -64,7 +65,7 @@ export async function getAstData(contractName: string, fileContent: string, anal
 			contractName,
 			bytecode,
 			deployedBytecode,
-			mainSource,
+			fixedPath,
 			sources,
 			compiled,
 			solcVersion,
