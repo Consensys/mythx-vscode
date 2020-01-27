@@ -98,12 +98,27 @@ export async function runStandardMode(fileUri: vscode.Uri): Promise<void> {
                                 const analyzeRes = await mythx.analyze(
                                     requestMythx,
                                 )
+                                vscode.window.showInformationMessage(
+                                    environment,
+                                )
+
+                                // TODO: MOVE THIS TO OWN FILE AND MAKE IT AVAILABLE TO ALL COMMANDS
+                                let dashboardLink: string =
+                                    'https://dashboard.mythx.io/#/console/analyses/'
+
+                                if (
+                                    environment ===
+                                    'https://api.staging.mythx.io/v1/'
+                                ) {
+                                    dashboardLink =
+                                        'https://dashboard.staging.mythx.io/#/console/analyses/${uuid}'
+                                }
 
                                 const { uuid } = analyzeRes
                                 vscode.window
                                     .showInformationMessage(
                                         `Your analysis has been submitted! Wait for vscode linting or see detailed results at
-								https://dashboard.mythx.io/#/console/analyses/${uuid}`,
+								${dashboardLink}/${uuid}`,
                                         'Dismiss',
                                     )
                                     .then((x) => {

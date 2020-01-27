@@ -1,104 +1,162 @@
-import * as vscode from "vscode";
-import { Client } from "mythxjs"
+import * as vscode from 'vscode'
+import { Client } from 'mythxjs'
 
-import { getCredentials } from "../login/getCredentials"
+import { getCredentials } from '../login/getCredentials'
 
 import { errorCodeDiagnostic } from '../errorCodeDiagnostic'
 
-import { AnalyzeOptions, Credentials } from "../utils/types"
-import { getFileContent } from "../utils/getFileContent"
+import { AnalyzeOptions, Credentials } from '../utils/types'
+import { getFileContent } from '../utils/getFileContent'
 import { getAstData } from '../utils/getAstData'
-import { getContractName } from "../utils/getContractName";
+import { getContractName } from '../utils/getContractName'
 
 const { window } = vscode
 let mythx: Client
 
-export async function analyzeContract(diagnosticCollection: vscode.DiagnosticCollection, fileUri: vscode.Uri): Promise<void> {
+export async function analyzeContract(
+    diagnosticCollection: vscode.DiagnosticCollection,
+    fileUri: vscode.Uri,
+): Promise<void> {
+    await vscode.extensions
+        .getExtension('JuanBlanco.solidity')
+        .activate()
+        .then(
+            async (active) => {
+                vscode.commands
+                    .executeCommand('solidity.compile.active')
+                    .then(async (done) => {
+                        try {
+                            if (!done) {
+                                throw new Error(
+                                    `MythX: Error with solc compilation.`,
+                                )
+                            } else {
+                                const credentials: Credentials = await getCredentials()
+                                const projectConfiguration: vscode.WorkspaceConfiguration = vscode.workspace.getConfiguration(
+                                    'mythxvsc',
+                                )
+                                let environment: string =
+                                    'https://api.mythx.io/v1/"'
+                                if (projectConfiguration.environment) {
+                                    environment =
+                                        projectConfiguration.environment
+                                }
 
-	await vscode.extensions.getExtension("JuanBlanco.solidity").activate().then(
-		async (active) => {
-			vscode.commands.executeCommand("solidity.compile.active").then(
-				async done => {
-					try {
-						if (!done) {
-							throw new Error(`MythX: Error with solc compilation.`)
-						} else {
-							const credentials: Credentials = await getCredentials();
-							const projectConfiguration: vscode.WorkspaceConfiguration = vscode.workspace.getConfiguration('mythxvsc');
-							let environment: string = 'https://api.mythx.io/v1/"'
-							if(projectConfiguration.environment) {
-								environment = projectConfiguration.environment
-							}
+                                mythx = new Client(
+                                    credentials.ethAddress,
+                                    credentials.password,
+                                    'mythXvsc',
+                                    environment,
+                                )
 
-							mythx = new Client(credentials.ethAddress, credentials.password, 'mythXvsc', environment);
+                                await mythx.login()
 
-							await mythx.login();
+                                const fileContent = await getFileContent(
+                                    fileUri,
+                                )
 
-							const fileContent = await getFileContent(fileUri)
-							
-							const contractName = await getContractName(fileUri)
+                                const contractName = await getContractName(
+                                    fileUri,
+                                )
 
-							const requestObj: AnalyzeOptions = await getAstData(contractName, fileContent);
+                                const requestObj: AnalyzeOptions = await getAstData(
+                                    contractName,
+                                    fileContent,
+                                )
 
-							const analyzeRes = await mythx.analyze(
-								requestObj,
-							);
+                                const analyzeRes = await mythx.analyze(
+                                    requestObj,
+                                )
 
-							const { uuid } = analyzeRes;
-							vscode.window.showInformationMessage(
-								`Your analysis has been submitted! Wait for vscode linting or see detailed results at
-								https://dashboard.mythx.io/#/console/analyses/${uuid}`, 'Dismiss'
-							).then(
-								x => { return }
-							)
+                                const { uuid } = analyzeRes
 
-							// Get in progress bar
-							await window.withProgress(
-								{
-									cancellable: true,
-									location: vscode.ProgressLocation.Notification,
-									title: `Analysing smart contract ${contractName}`,
+                                // TODO: MOVE THIS TO OWN FILE AND MAKE IT AVAILABLE TO ALL COMMANDS
+                                let dashboardLink: string =
+                                    'https://dashboard.mythx.io/#/console/analyses/'
 
-								},
-								(_) => new Promise(
-									(resolve) => {
-										// Handle infinite queue
-										const timer = setInterval(async () => {
-											const analysis = await mythx.getAnalysisStatus(uuid);
-											if (analysis.status === 'Finished') {
-												clearInterval(timer);
-												resolve('done');
-											}
-										}, 10000);
-									}));
+                                if (
+                                    environment ===
+                                    'https://api.staging.mythx.io/v1/'
+                                ) {
+                                    dashboardLink =
+                                        'https://dashboard.staging.mythx.io/#/console/analyses/${uuid}'
+                                }
 
-							diagnosticCollection.clear();
-							const analysisResult = await mythx.getDetectedIssues(uuid);
+                                vscode.window
+                                    .showInformationMessage(
+                                        `Your analysis has been submitted! Wait for vscode linting or see detailed results at
+								${dashboardLink}/${uuid}`,
+                                        'Dismiss',
+                                    )
+                                    .then((x) => {
+                                        return
+                                    })
 
-							const { issues } = analysisResult[0];
+                                // Get in progress bar
+                                await window.withProgress(
+                                    {
+                                        cancellable: true,
+                                        location:
+                                            vscode.ProgressLocation
+                                                .Notification,
+                                        title: `Analysing smart contract ${contractName}`,
+                                    },
+                                    (_) =>
+                                        new Promise((resolve) => {
+                                            // Handle infinite queue
+                                            const timer = setInterval(
+                                                async () => {
+                                                    const analysis = await mythx.getAnalysisStatus(
+                                                        uuid,
+                                                    )
+                                                    if (
+                                                        analysis.status ===
+                                                        'Finished'
+                                                    ) {
+                                                        clearInterval(timer)
+                                                        resolve('done')
+                                                    }
+                                                },
+                                                10000,
+                                            )
+                                        }),
+                                )
 
-							// Some warning have messages but no SWCID (like free trial user warn)
-							const filtered = issues.filter(
-								issue => issue.swcID !== '',
-							);
-							if (!filtered) {
-								vscode.window.showInformationMessage(`MythXvs: No security issues found in your contract.`);
-							} else {
-								vscode.window.showWarningMessage(`MythXvs: found ${filtered.length} security issues with contract.`);
-							}
+                                diagnosticCollection.clear()
+                                const analysisResult = await mythx.getDetectedIssues(
+                                    uuid,
+                                )
 
-							// Diagnostic
-							errorCodeDiagnostic(vscode.window.activeTextEditor.document, diagnosticCollection, analysisResult);
-						}
-					} catch (err) {
-						vscode.window.showErrorMessage(
-							`MythXvsc: ${err}`
-						)
-					}
-				}
-			)
-		},
-		(err) => { throw new Error(`MythX: Error with solc compilation. ${err}`) }
-	)
+                                const { issues } = analysisResult[0]
 
+                                // Some warning have messages but no SWCID (like free trial user warn)
+                                const filtered = issues.filter(
+                                    (issue) => issue.swcID !== '',
+                                )
+                                if (!filtered) {
+                                    vscode.window.showInformationMessage(
+                                        `MythXvs: No security issues found in your contract.`,
+                                    )
+                                } else {
+                                    vscode.window.showWarningMessage(
+                                        `MythXvs: found ${filtered.length} security issues with contract.`,
+                                    )
+                                }
+
+                                // Diagnostic
+                                errorCodeDiagnostic(
+                                    vscode.window.activeTextEditor.document,
+                                    diagnosticCollection,
+                                    analysisResult,
+                                )
+                            }
+                        } catch (err) {
+                            vscode.window.showErrorMessage(`MythXvsc: ${err}`)
+                        }
+                    })
+            },
+            (err) => {
+                throw new Error(`MythX: Error with solc compilation. ${err}`)
+            },
+        )
 }
