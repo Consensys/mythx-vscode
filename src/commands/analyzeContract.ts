@@ -35,9 +35,7 @@ export async function analyzeContract(diagnosticCollection: vscode.DiagnosticCol
 							await mythx.login();
 
 							const fileContent = await getFileContent(fileUri)
-
 							
-
 							const contractName = await getContractName(fileUri)
 
 							const requestObj: AnalyzeOptions = await getAstData(contractName, fileContent);
