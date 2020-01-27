@@ -81,6 +81,11 @@
                     "when": "resourceLangId == solidity",
                     "command": "mythx.analyzeContract",
                     "group": "2_mythx"
+                },
+                {
+                    "when": "resourceLangId == solidity",
+                    "command": "mythx.analyzeContract",
+                    "group": "2_mythx"
                 }
             ],
             "editor/title": [

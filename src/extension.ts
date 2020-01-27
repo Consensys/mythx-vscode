@@ -22,6 +22,6 @@ export async function activate(context: vscode.ExtensionContext) {
     });
 
     vscode.commands.registerCommand("mythx.runStandardMode", async () => {
-        runStandardMode(vscode.window.activeTextEditor.document.uri.fsPath)
+        runStandardMode(vscode.window.activeTextEditor.document.uri)
     });
 }
