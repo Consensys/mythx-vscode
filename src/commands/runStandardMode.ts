@@ -9,7 +9,7 @@ import { getAstData } from '../utils/getAstData'
 const { window } = vscode
 let mythx: Client
 
-export async function runFullMode(fileUri: string): Promise<void> {
+export async function runStandardMode(fileUri: string): Promise<void> {
 	let contractName;
 
 		await vscode.extensions.getExtension("JuanBlanco.solidity").activate().then(
@@ -43,7 +43,7 @@ export async function runFullMode(fileUri: string): Promise<void> {
 									}
 								)
 		
-								const requestObj: AnalyzeOptions = await getAstData(contractName, fileContent, 'deep');
+								const requestObj: AnalyzeOptions = await getAstData(contractName, fileContent, 'full');
 								const analyzeRes = await mythx.analyze(
 									requestObj,
 								);
