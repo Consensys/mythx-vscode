@@ -34,6 +34,7 @@ export async function getContractName(fileUri: vscode.Uri): Promise<string>  {
 
 		const documentObj = await vscode.workspace.openTextDocument(outputAST)
 		const compiled = JSON.parse(documentObj.getText());
+		
 
         const contract = compiled.contracts[fixedPath]
 		const contracts = Object.keys(contract);
