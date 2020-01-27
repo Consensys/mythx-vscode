@@ -27,7 +27,6 @@ export async function runStandardMode(fileUri: vscode.Uri): Promise<void> {
                                     `MythX: Error with solc compilation.`,
                                 )
                             } else {
-                                console.log(fileUri, 'FILE')
                                 const credentials: Credentials = await getCredentials()
                                 const projectConfiguration: vscode.WorkspaceConfiguration = vscode.workspace.getConfiguration(
                                     'mythxvsc',
@@ -98,9 +97,6 @@ export async function runStandardMode(fileUri: vscode.Uri): Promise<void> {
                                 const analyzeRes = await mythx.analyze(
                                     requestMythx,
                                 )
-                                vscode.window.showInformationMessage(
-                                    environment,
-                                )
 
                                 // TODO: MOVE THIS TO OWN FILE AND MAKE IT AVAILABLE TO ALL COMMANDS
                                 let dashboardLink: string =
@@ -137,11 +133,11 @@ export async function runStandardMode(fileUri: vscode.Uri): Promise<void> {
                                 )
                                 if (!filtered) {
                                     vscode.window.showInformationMessage(
-                                        `MythXvs: No security issues found in your contract.`,
+                                        `MythXvsc: No security issues found in your contract.`,
                                     )
                                 } else {
                                     vscode.window.showWarningMessage(
-                                        `MythXvs: found ${filtered.length} security issues with contract.`,
+                                        `MythXvsc: found ${filtered.length} security issues with contract.`,
                                     )
                                 }
                             }

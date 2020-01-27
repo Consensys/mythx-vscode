@@ -8,10 +8,8 @@ export async function getCompiledData(fileUri: vscode.Uri) {
 		let outputAST
 
 		const rootPath = vscode.workspace.workspaceFolders[0].uri.fsPath;
-		console.log(rootPath, 'root')
 
         let FILEPATH = fileUri.fsPath
-		console.log(FILEPATH, 'FILEPATH')
 
 		// Windows OS hack
 		if(os.platform() === 'win32') {
