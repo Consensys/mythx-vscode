@@ -10,7 +10,7 @@ import { getFileContent } from '../utils/getFileContent'
 import { getCompiledData } from '../utils/getCompiledData'
 import { getContractName } from '../utils/getContractName'
 import { createAnalyzeRequest } from '../utils/createAnalyzeRequest'
-
+const os = require('os')
 const { window } = vscode
 let mythx: Client
 
@@ -68,13 +68,24 @@ export async function analyzeContract(
 								CREATE REQUEST OBJECT
 							    */
 
+                               let FILEPATH = fileUri.fsPath
+
+                               // Windows OS hack
+                               if (os.platform() === 'win32') {
+                                   FILEPATH = FILEPATH.replace(/\\/g, '/')
+                                   if (FILEPATH.charAt(0) === '/') {
+                                       FILEPATH = FILEPATH.substr(1)
+                                   }
+                               }
+
                                 const contract =
-                                    compiled.contracts[fileUri.fsPath]
+                                    compiled.contracts[FILEPATH]
+                                console.log(contract);
 
                                 const sources = compiled.sources
-
+                                console.log(sources);
                                 // source is required by our API but does not exist in solc output
-                                sources[fileUri.fsPath].source = fileContent
+                                sources[FILEPATH].source = fileContent
 
                                 // Bytecode
                                 const bytecode: Bytecode =
@@ -92,7 +103,7 @@ export async function analyzeContract(
                                     contractName,
                                     bytecode,
                                     deployedBytecode,
-                                    fileUri.fsPath,
+                                    FILEPATH,
                                     sources,
                                     compiled,
                                     solcVersion,
