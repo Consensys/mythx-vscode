@@ -40,11 +40,11 @@ The MythXvsc extension depends on Juan Blanco [solidity extension](https://marke
 
 -   Analysis fails straight away on some contract. This is most likely caused by the API not digesting some input. Please contact the extension developer with a copy of the smart contract in order for us to investigate further.
 
+-   When analyzing multiple contracts, the command does not work on the first attempt but it does on the second one.
+
 ## Features that will be implemented in the future
 
 -   Logout from MythX
--   Full analysis mode
--   Multiple files submission
 -   Detailed report
 
 ## Acknowledgements

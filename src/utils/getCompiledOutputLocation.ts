@@ -1,7 +1,6 @@
 import * as vscode from "vscode";
 const os = require('os');
 const path = require('path')
-const fs = require('fs');
 
 export function getCompiledOutputLocation(): string {
     try {
@@ -16,6 +15,9 @@ export function getCompiledOutputLocation(): string {
                 fixedPath = fixedPath.substr(1);
             }
         }
+
+        console.log(fixedPath, 'fixedPath');
+
         
         const fileName = fixedPath.split("/").pop();
         const fileNameTrimmed = fileName.replace('.sol', '')

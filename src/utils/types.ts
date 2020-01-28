@@ -23,6 +23,7 @@ export interface AnalyzeOptions {
     sourceList?: Array<string>
     solcVersion?: string
     analysisMode?: string
+    groupId?: string
 }
 
 export interface SubmitContractRes {

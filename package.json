@@ -19,6 +19,7 @@
     "activationEvents": [
         "onCommand:mythx.analyzeContract",
         "onCommand:mythx.runFullMode",
+        "onCommand:mythx.runAnalyzeAll",
         "onCommand:mythx.runStandardMode"
     ],
     "main": "./out/extension.js",
@@ -57,6 +58,10 @@
                 "title": "MythX: Run Full Mode Analysis"
             },
             {
+                "command": "mythx.runAnalyzeAll",
+                "title": "MythX: Analyze all files"
+            },
+            {
                 "command": "mythx.runStandardMode",
                 "title": "MythX: Run Standard Mode Analysis (~30mins)"
             }
@@ -70,6 +75,10 @@
                 {
                     "when": "resourceLangId == solidity",
                     "command": "mythx.runFullMode"
+                },
+                {
+                    "when": "resourceLangId == solidity",
+                    "command": "mythx.runAnalyzeAll"
                 },
                 {
                     "when": "resourceLangId == solidity",
