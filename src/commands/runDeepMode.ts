@@ -110,14 +110,14 @@ export async function runDeepMode(fileUri: vscode.Uri): Promise<void> {
 
                                 // TODO: MOVE THIS TO OWN FILE AND MAKE IT AVAILABLE TO ALL COMMANDS
                                 let dashboardLink: string =
-                                    'https://dashboard.mythx.io/#/console/analyses/'
+                                    'https://dashboard.mythx.io/#/console/analyses'
 
                                 if (
                                     environment ===
                                     'https://api.staging.mythx.io/v1/'
                                 ) {
                                     dashboardLink =
-                                        'https://dashboard.staging.mythx.io/#/console/analyses/${uuid}'
+                                        'https://dashboard.staging.mythx.io/#/console/analyses'
                                 }
 
                                 const { uuid } = analyzeRes
