@@ -96,7 +96,7 @@ export async function analyzeContract(
                                     sources,
                                     compiled,
                                     solcVersion,
-                                    'full',
+                                    'quick',
                                 )
 
                                 const analyzeRes = await mythx.analyze(
