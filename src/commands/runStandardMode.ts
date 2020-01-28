@@ -8,6 +8,7 @@ import { getFileContent } from '../utils/getFileContent'
 import { getContractName } from '../utils/getContractName'
 import { getCompiledData } from '../utils/getCompiledData'
 import { createAnalyzeRequest } from '../utils/createAnalyzeRequest'
+const os = require('os')
 
 let mythx: Client
 
@@ -62,13 +63,23 @@ export async function runStandardMode(fileUri: vscode.Uri): Promise<void> {
 								CREATE REQUEST OBJECT
 							    */
 
+                               let FILEPATH = fileUri.fsPath
+
+                               // Windows OS hack
+                               if (os.platform() === 'win32') {
+                                   FILEPATH = FILEPATH.replace(/\\/g, '/')
+                                   if (FILEPATH.charAt(0) === '/') {
+                                       FILEPATH = FILEPATH.substr(1)
+                                   }
+                               }
+
                                 const contract =
-                                    compiled.contracts[fileUri.fsPath]
+                                    compiled.contracts[FILEPATH]
 
                                 const sources = compiled.sources
 
                                 // source is required by our API but does not exist in solc output
-                                sources[fileUri.fsPath].source = fileContent
+                                sources[FILEPATH].source = fileContent
 
                                 // Bytecode
                                 const bytecode: Bytecode =
@@ -86,7 +97,7 @@ export async function runStandardMode(fileUri: vscode.Uri): Promise<void> {
                                     contractName,
                                     bytecode,
                                     deployedBytecode,
-                                    fileUri.fsPath,
+                                    FILEPATH,
                                     sources,
                                     compiled,
                                     solcVersion,
