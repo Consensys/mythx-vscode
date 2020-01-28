@@ -12,7 +12,7 @@ const os = require('os')
 
 let mythx: Client
 
-export async function runStandardMode(fileUri: vscode.Uri): Promise<void> {
+export async function runDeepMode(fileUri: vscode.Uri): Promise<void> {
     await vscode.extensions
         .getExtension('JuanBlanco.solidity')
         .activate()
@@ -101,7 +101,7 @@ export async function runStandardMode(fileUri: vscode.Uri): Promise<void> {
                                     sources,
                                     compiled,
                                     solcVersion,
-                                    'standard',
+                                    'deep',
                                 )
 
                                 const analyzeRes = await mythx.analyze(
@@ -123,7 +123,7 @@ export async function runStandardMode(fileUri: vscode.Uri): Promise<void> {
                                 const { uuid } = analyzeRes
                                 vscode.window
                                     .showInformationMessage(
-                                        `Your analysis has been submitted! This will take up to 30mins. See detailed results at
+                                        `Your analysis has been submitted! This will take up to 70mins. See detailed results at
 								${dashboardLink}/${uuid}`,
                                         'Dismiss',
                                     )

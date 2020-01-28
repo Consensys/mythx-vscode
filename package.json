@@ -18,7 +18,7 @@
     ],
     "activationEvents": [
         "onCommand:mythx.analyzeContract",
-        "onCommand:mythx.runFullMode",
+        "onCommand:mythx.runDeepMode",
         "onCommand:mythx.runStandardMode"
     ],
     "main": "./out/extension.js",
@@ -46,19 +46,19 @@
         "commands": [
             {
                 "command": "mythx.analyzeContract",
-                "title": "MythX: Analyze smart contract",
+                "title": "MythX: Run Quick Mode Analysis",
                 "icon": {
                     "light": "images/mythx-grey.svg",
                     "dark": "images/mythx-light-grey.svg"
                 }
             },
             {
-                "command": "mythx.runFullMode",
-                "title": "MythX: Run Full Mode Analysis"
+                "command": "mythx.runDeepMode",
+                "title": "MythX: Run Deep Mode Analysis"
             },
             {
                 "command": "mythx.runStandardMode",
-                "title": "MythX: Run Standard Mode Analysis (~30mins)"
+                "title": "MythX: Run Standard Mode Analysis"
             }
         ],
         "menus": {
@@ -69,7 +69,7 @@
                 },
                 {
                     "when": "resourceLangId == solidity",
-                    "command": "mythx.runFullMode"
+                    "command": "mythx.runDeepMode"
                 },
                 {
                     "when": "resourceLangId == solidity",
