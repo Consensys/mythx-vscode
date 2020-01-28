@@ -63,18 +63,17 @@ export async function runDeepMode(fileUri: vscode.Uri): Promise<void> {
 								CREATE REQUEST OBJECT
 							    */
 
-                               let FILEPATH = fileUri.fsPath
+                                let FILEPATH = fileUri.fsPath
 
-                               // Windows OS hack
-                               if (os.platform() === 'win32') {
-                                   FILEPATH = FILEPATH.replace(/\\/g, '/')
-                                   if (FILEPATH.charAt(0) === '/') {
-                                       FILEPATH = FILEPATH.substr(1)
-                                   }
-                               }
+                                // Windows OS hack
+                                if (os.platform() === 'win32') {
+                                    FILEPATH = FILEPATH.replace(/\\/g, '/')
+                                    if (FILEPATH.charAt(0) === '/') {
+                                        FILEPATH = FILEPATH.substr(1)
+                                    }
+                                }
 
-                                const contract =
-                                    compiled.contracts[FILEPATH]
+                                const contract = compiled.contracts[FILEPATH]
 
                                 const sources = compiled.sources
 
@@ -123,7 +122,8 @@ export async function runDeepMode(fileUri: vscode.Uri): Promise<void> {
                                 const { uuid } = analyzeRes
                                 vscode.window
                                     .showInformationMessage(
-                                        `Your analysis has been submitted! This will take up to 70mins. See detailed results at
+                                        `Your analysis has been submitted! 
+                                        Your detailed scan results will be ready in approximately 90 mins at the following link:
 								${dashboardLink}/${uuid}`,
                                         'Dismiss',
                                     )

@@ -130,7 +130,7 @@ export async function analyzeContract(
 
                                 vscode.window
                                     .showInformationMessage(
-                                        `Your analysis has been submitted! Wait for vscode linting or see detailed results at
+                                        `Your analysis has been submitted! Wait for vscode linting or see your detailed scan results at
 								${dashboardLink}/${uuid}`,
                                         'Dismiss',
                                     )
