@@ -21,7 +21,8 @@ export async function getAstData(contractName: string, fileContent: string, anal
 				fixedPath = fixedPath.substr(1);
 			}
 		}
-		const fileName = fixedPath.split("/").pop();		const fileNameTrimmed = fileName.replace('.sol', '')
+		const fileName = fixedPath.split("/").pop();		
+		const fileNameTrimmed = fileName.replace('.sol', '')
 		const pathNoFileName = fixedPath.substring(0, fixedPath.lastIndexOf("/"));
 
 		// Find differences between two path

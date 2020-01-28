@@ -3,12 +3,11 @@ import { Client } from 'mythxjs'
 
 import { getCredentials } from '../login/getCredentials'
 
-import { AnalyzeOptions, Credentials, Bytecode } from '../utils/types'
+import { Credentials, Bytecode } from '../utils/types'
 import { getFileContent } from '../utils/getFileContent'
 import { getContractName } from '../utils/getContractName'
 import { getCompiledData } from '../utils/getCompiledData'
-
-import { hasPlaceHolder } from '../utils/hasPlaceHolder'
+import { createAnalyzeRequest } from '../utils/createAnalyzeRequest'
 
 let mythx: Client
 
@@ -61,7 +60,7 @@ export async function runStandardMode(fileUri: vscode.Uri): Promise<void> {
 
                                 /*
 								CREATE REQUEST OBJECT
-							*/
+							    */
 
                                 const contract =
                                     compiled.contracts[fileUri.fsPath]
@@ -150,30 +149,4 @@ export async function runStandardMode(fileUri: vscode.Uri): Promise<void> {
                 throw new Error(`MythX: Error with solc compilation. ${err}`)
             },
         )
-}
-
-// TODO: MOVE BELOW TO DIFFERENT FILE
-function createAnalyzeRequest(
-    contractName,
-    bytecode,
-    deployedBytecode,
-    mainSource,
-    sources,
-    compiled,
-    solcVersion,
-    analysisMode,
-): AnalyzeOptions {
-    return {
-        toolName: 'mythx-vscode-extension',
-        contractName: contractName,
-        bytecode: hasPlaceHolder(bytecode.object),
-        sourceMap: bytecode.sourceMap,
-        deployedBytecode: hasPlaceHolder(deployedBytecode.object),
-        deployedSourceMap: deployedBytecode.sourceMap,
-        mainSource: mainSource,
-        sources: sources,
-        sourceList: Object.keys(compiled.sources),
-        solcVersion: solcVersion,
-        analysisMode: analysisMode,
-    }
 }

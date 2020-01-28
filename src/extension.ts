@@ -13,8 +13,8 @@ export async function activate(context: vscode.ExtensionContext) {
 
     diagnosticsCollection = vscode.languages.createDiagnosticCollection('mythx');
 
-    vscode.commands.registerCommand("mythx.analyzeContract", async (fileUri: vscode.Uri) => {
-        analyzeContract(diagnosticsCollection, fileUri)
+    vscode.commands.registerCommand("mythx.analyzeContract", async () => {
+        analyzeContract(diagnosticsCollection, vscode.window.activeTextEditor.document.uri)
     });
 
     vscode.commands.registerCommand("mythx.runFullMode", async () => {

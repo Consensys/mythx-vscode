@@ -5,10 +5,11 @@ import { getCredentials } from '../login/getCredentials'
 
 import { errorCodeDiagnostic } from '../errorCodeDiagnostic'
 
-import { AnalyzeOptions, Credentials } from '../utils/types'
+import { Bytecode, Credentials } from '../utils/types'
 import { getFileContent } from '../utils/getFileContent'
-import { getAstData } from '../utils/getAstData'
+import { getCompiledData } from '../utils/getCompiledData'
 import { getContractName } from '../utils/getContractName'
+import { createAnalyzeRequest } from '../utils/createAnalyzeRequest'
 
 const { window } = vscode
 let mythx: Client
@@ -21,7 +22,7 @@ export async function analyzeContract(
         .getExtension('JuanBlanco.solidity')
         .activate()
         .then(
-            async (active) => {
+            async () => {
                 vscode.commands
                     .executeCommand('solidity.compile.active')
                     .then(async (done) => {
@@ -59,16 +60,48 @@ export async function analyzeContract(
                                     fileUri,
                                 )
 
-                                const requestObj: AnalyzeOptions = await getAstData(
+                                const compiled: any = await getCompiledData(
+                                    fileUri,
+                                )
+
+                                /*
+								CREATE REQUEST OBJECT
+							    */
+
+                                const contract =
+                                    compiled.contracts[fileUri.fsPath]
+
+                                const sources = compiled.sources
+
+                                // source is required by our API but does not exist in solc output
+                                sources[fileUri.fsPath].source = fileContent
+
+                                // Bytecode
+                                const bytecode: Bytecode =
+                                    contract[contractName].evm.bytecode
+                                const deployedBytecode: Bytecode =
+                                    contract[contractName].evm.deployedBytecode
+
+                                // Metadata
+                                const metadata = JSON.parse(
+                                    contract[contractName].metadata,
+                                )
+                                const solcVersion = metadata.compiler.version
+
+                                const requestMythx = createAnalyzeRequest(
                                     contractName,
-                                    fileContent,
+                                    bytecode,
+                                    deployedBytecode,
+                                    fileUri.fsPath,
+                                    sources,
+                                    compiled,
+                                    solcVersion,
+                                    'full',
                                 )
 
                                 const analyzeRes = await mythx.analyze(
-                                    requestObj,
+                                    requestMythx,
                                 )
-
-                                const { uuid } = analyzeRes
 
                                 // TODO: MOVE THIS TO OWN FILE AND MAKE IT AVAILABLE TO ALL COMMANDS
                                 let dashboardLink: string =
@@ -81,6 +114,8 @@ export async function analyzeContract(
                                     dashboardLink =
                                         'https://dashboard.staging.mythx.io/#/console/analyses/${uuid}'
                                 }
+
+                                const { uuid } = analyzeRes
 
                                 vscode.window
                                     .showInformationMessage(
