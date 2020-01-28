@@ -3,21 +3,16 @@ import { Client } from 'mythxjs'
 
 import { getCredentials } from '../login/getCredentials'
 
-import { errorCodeDiagnostic } from '../errorCodeDiagnostic'
-
-import { Bytecode, Credentials } from '../utils/types'
+import { Credentials, Bytecode } from '../utils/types'
 import { getFileContent } from '../utils/getFileContent'
-import { getCompiledData } from '../utils/getCompiledData'
 import { getContractName } from '../utils/getContractName'
+import { getCompiledData } from '../utils/getCompiledData'
 import { createAnalyzeRequest } from '../utils/createAnalyzeRequest'
 const os = require('os')
-const { window } = vscode
+
 let mythx: Client
 
-export async function analyzeContract(
-    diagnosticCollection: vscode.DiagnosticCollection,
-    fileUri: vscode.Uri,
-): Promise<void> {
+export async function runStandardMode(fileUri: vscode.Uri): Promise<void> {
     await vscode.extensions
         .getExtension('JuanBlanco.solidity')
         .activate()
@@ -80,10 +75,9 @@ export async function analyzeContract(
 
                                 const contract =
                                     compiled.contracts[FILEPATH]
-                                console.log(contract);
 
                                 const sources = compiled.sources
-                                console.log(sources);
+
                                 // source is required by our API but does not exist in solc output
                                 sources[FILEPATH].source = fileContent
 
@@ -107,7 +101,7 @@ export async function analyzeContract(
                                     sources,
                                     compiled,
                                     solcVersion,
-                                    'quick',
+                                    'full',
                                 )
 
                                 const analyzeRes = await mythx.analyze(
@@ -127,7 +121,6 @@ export async function analyzeContract(
                                 }
 
                                 const { uuid } = analyzeRes
-
                                 vscode.window
                                     .showInformationMessage(
                                         `Your analysis has been submitted! Wait for vscode linting or see detailed results at
@@ -138,37 +131,6 @@ export async function analyzeContract(
                                         return
                                     })
 
-                                // Get in progress bar
-                                await window.withProgress(
-                                    {
-                                        cancellable: true,
-                                        location:
-                                            vscode.ProgressLocation
-                                                .Notification,
-                                        title: `Analysing smart contract ${contractName}`,
-                                    },
-                                    (_) =>
-                                        new Promise((resolve) => {
-                                            // Handle infinite queue
-                                            const timer = setInterval(
-                                                async () => {
-                                                    const analysis = await mythx.getAnalysisStatus(
-                                                        uuid,
-                                                    )
-                                                    if (
-                                                        analysis.status ===
-                                                        'Finished'
-                                                    ) {
-                                                        clearInterval(timer)
-                                                        resolve('done')
-                                                    }
-                                                },
-                                                10000,
-                                            )
-                                        }),
-                                )
-
-                                diagnosticCollection.clear()
                                 const analysisResult = await mythx.getDetectedIssues(
                                     uuid,
                                 )
@@ -181,20 +143,13 @@ export async function analyzeContract(
                                 )
                                 if (!filtered) {
                                     vscode.window.showInformationMessage(
-                                        `MythXvs: No security issues found in your contract.`,
+                                        `MythXvsc: No security issues found in your contract.`,
                                     )
                                 } else {
                                     vscode.window.showWarningMessage(
-                                        `MythXvs: found ${filtered.length} security issues with contract.`,
+                                        `MythXvsc: found ${filtered.length} security issues with contract.`,
                                     )
                                 }
-
-                                // Diagnostic
-                                errorCodeDiagnostic(
-                                    vscode.window.activeTextEditor.document,
-                                    diagnosticCollection,
-                                    analysisResult,
-                                )
                             }
                         } catch (err) {
                             vscode.window.showErrorMessage(`MythXvsc: ${err}`)

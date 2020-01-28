@@ -1,6 +1,9 @@
 import * as vscode from "vscode";
+import { convertAbsoluteToRelativePath } from '../utils/convertAbsoluteToRelativePath'
+
 const os = require('os');
 const path = require('path')
+
 
 import { Bytecode, AnalyzeOptions } from "../utils/types"
 import { hasPlaceHolder } from '../utils/hasPlaceHolder'
@@ -18,11 +21,8 @@ export async function getAstData(contractName: string, fileContent: string, anal
 				fixedPath = fixedPath.substr(1);
 			}
 		}
-		
-		const fileName = fixedPath.split("/").pop();
+		const fileName = fixedPath.split("/").pop();		
 		const fileNameTrimmed = fileName.replace('.sol', '')
-
-
 		const pathNoFileName = fixedPath.substring(0, fixedPath.lastIndexOf("/"));
 
 		// Find differences between two path
@@ -32,8 +32,8 @@ export async function getAstData(contractName: string, fileContent: string, anal
             outputAST = path.join(rootPath, 'bin', `${fileNameTrimmed}-solc-output.json`);
         } else {
             outputAST =  path.join(rootPath, 'bin', relativePath, `${fileNameTrimmed}-solc-output.json`);
-        }
-
+		}
+		
 		const documentObj = await vscode.workspace.openTextDocument(outputAST)
 		const compiled = JSON.parse(documentObj.getText());
 
@@ -56,6 +56,10 @@ export async function getAstData(contractName: string, fileContent: string, anal
 		const metadata = JSON.parse(contract[contractName].metadata)
 		const solcVersion = metadata.compiler.version
 
+
+		// TODO: ADD THIS TO request object
+		// const mainSource = convertAbsoluteToRelativePath(rootPath, fixedPath)
+
 		// TODO: EXTRACT OUT CREATEANALYZEREQUEST
 
 		const request = createAnalyzeRequest(
@@ -68,7 +72,6 @@ export async function getAstData(contractName: string, fileContent: string, anal
 			solcVersion,
 			analysisMode
 		)
-
 		return request
 	
 	} catch(err) {
@@ -77,10 +80,8 @@ export async function getAstData(contractName: string, fileContent: string, anal
 	}
 }
 
-
 // TODO: MOVE BELOW TO DIFFERENT FILE
-
-function createAnalyzeRequest (contractName, bytecode, deployedBytecode, fixedPath, sources, compiled, solcVersion, analysisMode): AnalyzeOptions {
+function createAnalyzeRequest (contractName, bytecode, deployedBytecode, mainSource, sources, compiled, solcVersion, analysisMode): AnalyzeOptions {
 	return {
 		toolName: "mythx-vscode-extension",
 		contractName: contractName,
@@ -88,11 +89,10 @@ function createAnalyzeRequest (contractName, bytecode, deployedBytecode, fixedPa
 		sourceMap: bytecode.sourceMap,
 		deployedBytecode: hasPlaceHolder(deployedBytecode.object),
 		deployedSourceMap: deployedBytecode.sourceMap,
-		mainSource: fixedPath,
+		mainSource: mainSource,
 		sources: sources,
 		sourceList: Object.keys(compiled.sources),
 		solcVersion: solcVersion,
 		analysisMode: analysisMode
 	}
-
 }

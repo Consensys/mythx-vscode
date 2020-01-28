@@ -6,6 +6,8 @@ import { getCredentials } from "../login/getCredentials"
 import { AnalyzeOptions, Bytecode, Credentials } from "../utils/types"
 import { hasPlaceHolder } from '../utils/hasPlaceHolder'
 
+const os = require('os')
+
 let mythx: Client
 
 export async function runAnalyzeAll(diagnosticCollection): Promise<void> {
@@ -42,7 +44,9 @@ export async function runAnalyzeAll(diagnosticCollection): Promise<void> {
                             const rootPath = vscode.workspace.workspaceFolders[0].uri.fsPath;
                             const outputAST =  path.join(rootPath, 'bin/solc-output-compile-all.json')
                             const documentObj = await vscode.workspace.openTextDocument(outputAST)
+                            console.log(documentObj)
                             const compiled = JSON.parse(documentObj.getText());
+                            console.log(compiled)
 
                             const group = await mythx.createGroup()
 
@@ -52,7 +56,17 @@ export async function runAnalyzeAll(diagnosticCollection): Promise<void> {
                                     async (f: any) => {
                                         let fileContent;
 
-                                        const contract = compiled.contracts[f.fsPath]
+                                        let FILEPATH = f.fsPath
+
+                                        // Windows OS hack
+                                        if (os.platform() === 'win32') {
+                                            FILEPATH = FILEPATH.replace(/\\/g, '/')
+                                            if (FILEPATH.charAt(0) === '/') {
+                                                FILEPATH = FILEPATH.substr(1)
+                                            }
+                                        }
+
+                                        const contract = compiled.contracts[FILEPATH]
                                         
                                         // Make sure that only analyzes compiled contracts
                                         if(contract) {
@@ -69,7 +83,7 @@ export async function runAnalyzeAll(diagnosticCollection): Promise<void> {
                                                 const sources = compiled.sources
 
                                                 // source is required by our API but does not exist in solc output
-                                                sources[f.fsPath].source = fileContent
+                                                sources[FILEPATH].source = fileContent
 
                                                 // // Bytecode
                                                 const bytecode: Bytecode = contract[contractName].evm.bytecode
@@ -83,7 +97,7 @@ export async function runAnalyzeAll(diagnosticCollection): Promise<void> {
                                                     contractName,
                                                     bytecode,
                                                     deployedBytecode,
-                                                    f.fsPath,
+                                                    FILEPATH,
                                                     sources,
                                                     compiled,
                                                     solcVersion,

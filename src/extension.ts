@@ -3,6 +3,7 @@ import { ext } from "./extensionVariables";
 import { analyzeContract } from "./commands/analyzeContract";
 import { runFullMode } from "./commands/runFullMode";
 import { runAnalyzeAll } from './commands/runAnalyzeAll'
+import { runStandardMode } from './commands/runStandardMode';
 
 
 let diagnosticsCollection: vscode.DiagnosticCollection
@@ -13,9 +14,8 @@ export async function activate(context: vscode.ExtensionContext) {
 
     diagnosticsCollection = vscode.languages.createDiagnosticCollection('mythx');
 
-    vscode.commands.registerCommand("mythx.analyzeContract", async (fileUri: vscode.Uri) => {
-        console.log(fileUri, 'f')
-        analyzeContract(diagnosticsCollection, fileUri)
+    vscode.commands.registerCommand("mythx.analyzeContract", async () => {
+        analyzeContract(diagnosticsCollection, vscode.window.activeTextEditor.document.uri)
     });
 
     vscode.commands.registerCommand("mythx.runFullMode", async () => {
@@ -24,5 +24,9 @@ export async function activate(context: vscode.ExtensionContext) {
 
     vscode.commands.registerCommand("mythx.runAnalyzeAll", async () => {
         runAnalyzeAll(diagnosticsCollection)
+    })
+    
+    vscode.commands.registerCommand("mythx.runStandardMode", async () => {
+        runStandardMode(vscode.window.activeTextEditor.document.uri)
     });
 }
