@@ -16,7 +16,7 @@ export async function getCredentials(): Promise<Credentials> {
 			accessToken = projectConfiguration.accessToken
 		}
 		else {
-			window.showInformationMessage("No user settings found for EthAddress and password. Trial user will be soon deprecated.")
+			window.showInformationMessage("No user settings found for EthAddress and password. Trial user will be soon deprecated. Please register an account on www.mythx.io")
 		}
 
 		return {
