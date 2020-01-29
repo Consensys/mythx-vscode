@@ -12,7 +12,7 @@ export async function getCredentials(): Promise<Credentials> {
 			ethAddress = projectConfiguration.ethAddress
 			password = projectConfiguration.password
 		} else {
-			window.showInformationMessage("No user settings found for EthAddress and password. Using trial user")
+			window.showInformationMessage("No user settings found for EthAddress and password. Trial user will be soon deprecated.")
 		}
 
 		return {
