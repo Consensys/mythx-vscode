@@ -43,6 +43,7 @@ export async function runDeepMode(fileUri: vscode.Uri): Promise<void> {
                                     credentials.password,
                                     'mythXvsc',
                                     environment,
+                                    credentials.accessToken
                                 )
 
                                 await mythx.login()

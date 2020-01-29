@@ -35,7 +35,7 @@ export async function analyzeContract(
                                 const credentials: Credentials = await getCredentials()
                                 const projectConfiguration: vscode.WorkspaceConfiguration = vscode.workspace.getConfiguration(
                                     'mythxvsc',
-                                )
+                                )   
                                 let environment: string =
                                     'https://api.mythx.io/v1/"'
                                 if (projectConfiguration.environment) {
@@ -48,6 +48,7 @@ export async function analyzeContract(
                                     credentials.password,
                                     'mythXvsc',
                                     environment,
+                                    credentials.accessToken
                                 )
 
                                 await mythx.login()

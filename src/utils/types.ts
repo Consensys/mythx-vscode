@@ -5,12 +5,6 @@ export interface JwtTokensInterface {
     refresh: string
 }
 
-export interface loginResponse {
-    jwtTokens: JwtTokensInterface
-    access: string
-    refresh: string
-}
-
 export interface AnalyzeOptions {
     toolName?: string
     contractName?: string
@@ -68,6 +62,7 @@ export interface Bytecode {
 }
 
 export interface Credentials {
-    ethAddress: string
-    password: string
+    ethAddress?: string
+    password?: string
+    accessToken?: string
 }

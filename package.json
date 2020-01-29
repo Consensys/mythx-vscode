@@ -40,6 +40,11 @@
                     "type": "string",
                     "default": "https://api.mythx.io/v1/",
                     "description": "MythX environment."
+                },
+                "mythxvsc.accessToken": {
+                    "type": "string",
+                    "default": null,
+                    "description": "MythX access token for login."
                 }
             }
         },
