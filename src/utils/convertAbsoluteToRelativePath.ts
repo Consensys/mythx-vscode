@@ -3,7 +3,6 @@ export function convertAbsoluteToRelativePath (source, directoryPath, rootDirect
     source = '/' + rootDirectory + source;
     source = source.toLowerCase();
     source = source.replace(directoryPath.toLowerCase(), '');
-    source = '/' + rootDirectory.toLowerCase() + source;
     return source;
   }
   
