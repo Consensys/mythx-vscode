@@ -7,7 +7,7 @@ export function createAnalyzeRequest(
     deployedBytecode,
     mainSource,
     sources,
-    compiled,
+    sourceList,
     solcVersion,
     analysisMode,
 ): AnalyzeOptions {
@@ -20,7 +20,7 @@ export function createAnalyzeRequest(
         deployedSourceMap: deployedBytecode.sourceMap,
         mainSource: mainSource,
         sources: sources,
-        sourceList: Object.keys(compiled.sources),
+        sourceList: sourceList,
         solcVersion: solcVersion,
         analysisMode: analysisMode,
     }
