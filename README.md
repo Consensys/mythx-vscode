@@ -8,25 +8,22 @@ The extensions provides:
 -   Submission of analysis
 -   Displaying analysis result in VS Code in a linting fashion
 
-## Instructions
+## Authentication
 
-# Access token login (preferred)
+MythX uses an API key for authentication. Once your account is set up, head over to the [dashboard.mythx.io/](https://dashboard.mythx.io/). In the *Profile* section there is an element labeled `MythX API Key`. Generate a new API key by entering your account password:
 
-After registering your mythx account, visit [dashboard.mythx.io/](https://dashboard.mythx.io/) and from the tools page create a new access token (also reffered as API key). Please copy the token and paste it in the Mythx extension user settings as shown below.
+![api-key-password](images/screenshots/api-key-password.png)
+
+On successful authentication, a new API key is generated, which can be used for further authentication by API clients. It will only be shown once, and can be copied using the icon on the right of the truncated secret string. If the token is lost, a new one can be generated again in the same way as explained above.
+
+![api-key](images/screenshots/api-key.png)
+
+Copy the token and paste it in the Mythx extension user settings as shown below.
 
 ![access_token](images/screenshots/access_token.png)
 
-# Ethereum Address / password login (not reccomended)
 
-If you do want to use a ethereum address/password combination the extension supports it. Please enter your registered MythX Ethereum address and password in the VS Code user settings. These fields are properties of the extension as shown in the screenshots below:
-
-After installing the extension please enter your registered MythX `ethAddress` and `password` in VSCode user settings. These fields are properties of `mythxvsc` as shown in the screenshots below.
-
-If no `ethAddress` and `password` provided the extension will fallback to use default trial credentials for MythX (trials account will soon be deprecated).
-
-![ethaddress_login](images/screenshots/ethaddress_login.png)
-
-**Please note that the credentials stored this way are exposed to VS Code. Be sure to understand the security risk this entails or contact the extension developers if you don’t.**
+**Authentication via Ethereum address/Username and password is deprecated. Please note that the credentials stored this way are exposed to VS Code. Be sure to understand the security risk this entails or contact the extension developers if you don’t.**
 
 # Usage
 
@@ -37,6 +34,8 @@ MythX give their users the ability to choose from three different scan options. 
 -   Standard analysis. This will take up to 30 minutes.
 
 -   Deep analyisis. This will take up to 90 minutes.
+
+Refer to the [plans](https://mythx.io/plans/) page to see which plan you need for each mode. 
 
 ![analysis_mode](images/screenshots/analysis_mode.png)
 
