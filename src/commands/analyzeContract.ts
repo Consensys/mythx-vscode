@@ -79,18 +79,18 @@ export async function analyzeContract(
                                     GET ROOTH PATH FOLDER
                                 */
 
-                                // Remove file name from path
-                                const fileName = FILEPATH.split('/').pop()
-                                const fileNameTrimmed = fileName.replace('.sol', '')
-                                const rootPath = FILEPATH.substring(0, FILEPATH.lastIndexOf('/'))
-
+                               
                                // Windows OS hack
                                if (os.platform() === 'win32') {
                                    FILEPATH = FILEPATH.replace(/\\/g, '/')
                                    if (FILEPATH.charAt(0) === '/') {
                                        FILEPATH = FILEPATH.substr(1)
-                                   }
-                               }
+                                    }
+                                }
+
+
+                                // Remove file name from path
+                                const rootPath = FILEPATH.substring(0, FILEPATH.lastIndexOf('/'))
 
 
                                 let directoryPath = rootPath.replace(/\\/g, '/');
