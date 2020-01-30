@@ -10,6 +10,8 @@ import { getFileContent } from '../utils/getFileContent'
 import { getCompiledData } from '../utils/getCompiledData'
 import { getContractName } from '../utils/getContractName'
 import { createAnalyzeRequest } from '../utils/createAnalyzeRequest'
+import { convertAbsoluteToRelativePath } from '../utils/convertAbsoluteToRelativePath'
+
 const os = require('os')
 const { window } = vscode
 let mythx: Client
@@ -50,6 +52,7 @@ export async function analyzeContract(
                                     environment,
                                 )
 
+
                                 await mythx.login()
 
                                 const fileContent = await getFileContent(
@@ -63,12 +66,22 @@ export async function analyzeContract(
                                 const compiled: any = await getCompiledData(
                                     fileUri,
                                 )
+                                console.log(compiled, 'compiled')
 
                                 /*
 								CREATE REQUEST OBJECT
 							    */
 
                                let FILEPATH = fileUri.fsPath
+
+                                                               /* 
+                                    GET ROOTH PATH FOLDER
+                                */
+
+                                // Remove file name from path
+                                const fileName = FILEPATH.split('/').pop()
+                                const fileNameTrimmed = fileName.replace('.sol', '')
+                                const rootPath = FILEPATH.substring(0, FILEPATH.lastIndexOf('/'))
 
                                // Windows OS hack
                                if (os.platform() === 'win32') {
@@ -78,14 +91,35 @@ export async function analyzeContract(
                                    }
                                }
 
+
+                                let directoryPath = rootPath.replace(/\\/g, '/');
+                                let rootDirectory: any = directoryPath.split('/');
+                                rootDirectory = rootDirectory[rootDirectory.length - 1];
+
+
+
                                 const contract =
                                     compiled.contracts[FILEPATH]
-                                console.log(contract);
 
                                 const sources = compiled.sources
-                                console.log(sources);
+                                console.log(sources, 'sources');
                                 // source is required by our API but does not exist in solc output
                                 sources[FILEPATH].source = fileContent
+
+                                let newSources = {};
+                                let sourcesKeys = Object.keys(compiled.sources);
+                                sourcesKeys.map((key)=> {
+                                  // Remove AST References
+                                  if(compiled.sources[key].ast) {
+                                      compiled.sources[key].ast.absolutePath = convertAbsoluteToRelativePath(compiled.sources[key].ast.absolutePath, directoryPath, rootDirectory);
+                                  }
+                                  if(compiled.sources[key].legacyAST) {
+                                      compiled.sources[key].legacyAST.attributes.absolutePath = convertAbsoluteToRelativePath(compiled.sources[key].legacyAST.attributes.absolutePath, directoryPath, rootDirectory);
+                                  }
+                                  // Remap key
+                                  newSources[convertAbsoluteToRelativePath(key, directoryPath, rootDirectory)] = compiled.sources[key];
+                                })
+                                
 
                                 // Bytecode
                                 const bytecode: Bytecode =
@@ -99,16 +133,19 @@ export async function analyzeContract(
                                 )
                                 const solcVersion = metadata.compiler.version
 
+                                
                                 const requestMythx = createAnalyzeRequest(
                                     contractName,
                                     bytecode,
                                     deployedBytecode,
-                                    FILEPATH,
-                                    sources,
-                                    compiled,
+                                    convertAbsoluteToRelativePath(FILEPATH,directoryPath, rootDirectory),
+                                    newSources,
+                                    Object.keys(newSources),
                                     solcVersion,
                                     'quick',
                                 )
+
+                                console.log(requestMythx)
 
                                 const analyzeRes = await mythx.analyze(
                                     requestMythx,

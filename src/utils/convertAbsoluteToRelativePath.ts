@@ -1,9 +1,9 @@
-export function convertAbsoluteToRelativePath (rootPath, fixedPath) {
-    let directoryPath = rootPath.replace(/\\/g, '/');
-    let rootDirectory: any = directoryPath.split('/');
-    rootDirectory = rootDirectory[rootDirectory.length - 1];
-
-    let convertedPath = fixedPath.replace(directoryPath, '');
-    convertedPath = '/' + rootDirectory + convertedPath;
-    return convertedPath;
-}
+export function convertAbsoluteToRelativePath (source, directoryPath, rootDirectory) {
+    source = source.replace(directoryPath, '');
+    source = '/' + rootDirectory + source;
+    source = source.toLowerCase();
+    source = source.replace(directoryPath.toLowerCase(), '');
+    source = '/' + rootDirectory.toLowerCase() + source;
+    return source;
+  }
+  
