@@ -37,7 +37,7 @@ export async function analyzeContract(
                                 const credentials: Credentials = await getCredentials()
                                 const projectConfiguration: vscode.WorkspaceConfiguration = vscode.workspace.getConfiguration(
                                     'mythxvsc',
-                                )   
+                                )
                                 let environment: string =
                                     'https://api.mythx.io/v1/"'
                                 if (projectConfiguration.environment) {
@@ -45,27 +45,24 @@ export async function analyzeContract(
                                         projectConfiguration.environment
                                 }
 
-                                if(credentials.accessToken) {
+                                if (credentials.accessToken) {
                                     mythx = new Client(
                                         null,
                                         null,
                                         'mythXvsc',
                                         environment,
-                                        credentials.accessToken
+                                        credentials.accessToken,
                                     )
-                                    console.log('HAS ACCESSTOKEN')
                                 } else {
                                     mythx = new Client(
                                         credentials.ethAddress,
                                         credentials.password,
                                         'mythXvsc',
                                         environment,
-                                        null
+                                        null,
                                     )
                                     await mythx.login()
-                                    console.log('HASETHADDESS')
                                 }
-
 
                                 const fileContent = await getFileContent(
                                     fileUri,
@@ -78,60 +75,77 @@ export async function analyzeContract(
                                 const compiled: any = await getCompiledData(
                                     fileUri,
                                 )
-                                console.log(compiled, 'compiled')
 
                                 /*
 								CREATE REQUEST OBJECT
 							    */
 
-                               let FILEPATH = fileUri.fsPath
+                                let FILEPATH = fileUri.fsPath
 
-                                                               /* 
+                                /* 
                                     GET ROOTH PATH FOLDER
                                 */
 
-                               
-                               // Windows OS hack
-                               if (os.platform() === 'win32') {
-                                   FILEPATH = FILEPATH.replace(/\\/g, '/')
-                                   if (FILEPATH.charAt(0) === '/') {
-                                       FILEPATH = FILEPATH.substr(1)
+                                // Windows OS hack
+                                if (os.platform() === 'win32') {
+                                    FILEPATH = FILEPATH.replace(/\\/g, '/')
+                                    if (FILEPATH.charAt(0) === '/') {
+                                        FILEPATH = FILEPATH.substr(1)
                                     }
                                 }
 
-
                                 // Remove file name from path
-                                const rootPath = FILEPATH.substring(0, FILEPATH.lastIndexOf('/'))
+                                const rootPath = FILEPATH.substring(
+                                    0,
+                                    FILEPATH.lastIndexOf('/'),
+                                )
 
+                                let directoryPath = rootPath.replace(/\\/g, '/')
+                                let rootDirectory: any = directoryPath.split(
+                                    '/',
+                                )
+                                rootDirectory =
+                                    rootDirectory[rootDirectory.length - 1]
 
-                                let directoryPath = rootPath.replace(/\\/g, '/');
-                                let rootDirectory: any = directoryPath.split('/');
-                                rootDirectory = rootDirectory[rootDirectory.length - 1];
-
-
-
-                                const contract =
-                                    compiled.contracts[FILEPATH]
+                                const contract = compiled.contracts[FILEPATH]
 
                                 const sources = compiled.sources
-                                console.log(sources, 'sources');
                                 // source is required by our API but does not exist in solc output
                                 sources[FILEPATH].source = fileContent
 
-                                let newSources = {};
-                                let sourcesKeys = Object.keys(compiled.sources);
-                                sourcesKeys.map((key)=> {
-                                  // Remove AST References
-                                  if(compiled.sources[key].ast) {
-                                      compiled.sources[key].ast.absolutePath = convertAbsoluteToRelativePath(compiled.sources[key].ast.absolutePath, directoryPath, rootDirectory);
-                                  }
-                                  if(compiled.sources[key].legacyAST) {
-                                      compiled.sources[key].legacyAST.attributes.absolutePath = convertAbsoluteToRelativePath(compiled.sources[key].legacyAST.attributes.absolutePath, directoryPath, rootDirectory);
-                                  }
-                                  // Remap key
-                                  newSources[convertAbsoluteToRelativePath(key, directoryPath, rootDirectory)] = compiled.sources[key];
+                                let newSources = {}
+                                let sourcesKeys = Object.keys(compiled.sources)
+                                sourcesKeys.map((key) => {
+                                    // Remove AST References
+                                    if (compiled.sources[key].ast) {
+                                        compiled.sources[
+                                            key
+                                        ].ast.absolutePath = convertAbsoluteToRelativePath(
+                                            compiled.sources[key].ast
+                                                .absolutePath,
+                                            directoryPath,
+                                            rootDirectory,
+                                        )
+                                    }
+                                    if (compiled.sources[key].legacyAST) {
+                                        compiled.sources[
+                                            key
+                                        ].legacyAST.attributes.absolutePath = convertAbsoluteToRelativePath(
+                                            compiled.sources[key].legacyAST
+                                                .attributes.absolutePath,
+                                            directoryPath,
+                                            rootDirectory,
+                                        )
+                                    }
+                                    // Remap key
+                                    newSources[
+                                        convertAbsoluteToRelativePath(
+                                            key,
+                                            directoryPath,
+                                            rootDirectory,
+                                        )
+                                    ] = compiled.sources[key]
                                 })
-                                
 
                                 // Bytecode
                                 const bytecode: Bytecode =
@@ -145,19 +159,20 @@ export async function analyzeContract(
                                 )
                                 const solcVersion = metadata.compiler.version
 
-                                
                                 const requestMythx = createAnalyzeRequest(
                                     contractName,
                                     bytecode,
                                     deployedBytecode,
-                                    convertAbsoluteToRelativePath(FILEPATH,directoryPath, rootDirectory),
+                                    convertAbsoluteToRelativePath(
+                                        FILEPATH,
+                                        directoryPath,
+                                        rootDirectory,
+                                    ),
                                     newSources,
                                     Object.keys(newSources),
                                     solcVersion,
                                     'quick',
                                 )
-
-                                console.log(requestMythx)
 
                                 const analyzeRes = await mythx.analyze(
                                     requestMythx,

@@ -23,7 +23,6 @@ export async function getCredentials(): Promise<Credentials> {
             window.showWarningMessage(
                 'No user settings found for EthAddress and password or access token. Please register an account on www.mythx.io',
             )
-            throw new Error(`MythXvs Error with getting credentials.`)
         }
 
         return {
@@ -32,6 +31,6 @@ export async function getCredentials(): Promise<Credentials> {
             accessToken,
         }
     } catch (err) {
-        throw new Error(`MythXvs Error with getting credentials. ${err}.`)
+        throw new Error(`Error with getting credentials. ${err}.`)
     }
 }

@@ -38,13 +38,24 @@ export async function runStandardMode(fileUri: vscode.Uri): Promise<void> {
                                         projectConfiguration.environment
                                 }
 
-                                mythx = new Client(
-                                    credentials.ethAddress,
-                                    credentials.password,
-                                    'mythXvsc',
-                                    environment,
-                                    credentials.accessToken
-                                )
+                                if (credentials.accessToken) {
+                                    mythx = new Client(
+                                        null,
+                                        null,
+                                        'mythXvsc',
+                                        environment,
+                                        credentials.accessToken,
+                                    )
+                                } else {
+                                    mythx = new Client(
+                                        credentials.ethAddress,
+                                        credentials.password,
+                                        'mythXvsc',
+                                        environment,
+                                        null,
+                                    )
+                                    await mythx.login()
+                                }
 
                                 await mythx.login()
 
