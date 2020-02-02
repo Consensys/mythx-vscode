@@ -2,7 +2,7 @@
     "name": "mythxvsc",
     "displayName": "MythX for VSCode",
     "description": "VS Code extension for MythX",
-    "version": "0.7.18",
+    "version": "0.7.19",
     "publisher": "mirkogarozzo",
     "icon": "images/icon.png",
     "repository": {
