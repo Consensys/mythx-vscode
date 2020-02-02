@@ -53,6 +53,7 @@ export async function analyzeContract(
                                         environment,
                                         credentials.accessToken
                                     )
+                                    console.log('HAS ACCESSTOKEN')
                                 } else {
                                     mythx = new Client(
                                         credentials.ethAddress,
@@ -62,6 +63,7 @@ export async function analyzeContract(
                                         null
                                     )
                                     await mythx.login()
+                                    console.log('HASETHADDESS')
                                 }
 
 
