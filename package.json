@@ -1,9 +1,9 @@
 {
     "name": "mythxvsc",
-    "displayName": "MythX for VSCode",
-    "description": "VS Code extension for MythX",
+    "displayName": "MythX",
+    "description": "Official VS Code extension for MythX",
     "version": "0.7.19",
-    "publisher": "mirkogarozzo",
+    "publisher": "MythX",
     "icon": "images/icon.png",
     "repository": {
         "type": "git",
@@ -13,9 +13,18 @@
         "vscode": "^1.33.0-insider"
     },
     "categories": [
+        "Debuggers",
         "Extension Packs",
         "Other"
     ],
+    "keywords": [
+        "security",
+        "blockchain",
+        "ethereum",
+        "smart-contract",
+        "solidity",
+        "evm"
+      ],
     "activationEvents": [
         "onCommand:mythx.analyzeContract",
         "onCommand:mythx.runDeepMode",
