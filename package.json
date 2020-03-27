@@ -2,7 +2,7 @@
     "name": "mythxvsc",
     "displayName": "MythX",
     "description": "Official VS Code extension for MythX",
-    "version": "0.7.19",
+    "version": "0.7.20",
     "publisher": "MythX",
     "icon": "images/icon.png",
     "repository": {
@@ -24,7 +24,7 @@
         "smart-contract",
         "solidity",
         "evm"
-      ],
+    ],
     "activationEvents": [
         "onCommand:mythx.analyzeContract",
         "onCommand:mythx.runDeepMode",
