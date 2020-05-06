@@ -2,7 +2,7 @@
     "name": "mythxvsc",
     "displayName": "MythX",
     "description": "Official VS Code extension for MythX",
-    "version": "0.7.20",
+    "version": "0.7.21",
     "publisher": "MythX",
     "icon": "images/icon.png",
     "repository": {
