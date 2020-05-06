@@ -23,7 +23,6 @@ export async function runStandardMode(fileUri: vscode.Uri): Promise<void> {
                 vscode.commands
                     .executeCommand('solidity.compile.active')
                     .then(async (done) => {
-                        console.log("🚨 standard mode");
                         try {
                             if (!done) {
                                 throw new Error(
