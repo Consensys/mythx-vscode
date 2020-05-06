@@ -1,20 +1,19 @@
-import * as vscode from 'vscode'
-import { Client } from 'mythxjs'
+import * as vscode from 'vscode';
 
-import { getCredentials } from '../login/getCredentials'
+import { Bytecode, Credentials } from '../utils/types';
 
-import { errorCodeDiagnostic } from '../errorCodeDiagnostic'
+import { Client } from 'mythxjs';
+import { convertAbsoluteToRelativePath } from '../utils/convertAbsoluteToRelativePath';
+import { createAnalyzeRequest } from '../utils/createAnalyzeRequest';
+import { errorCodeDiagnostic } from '../errorCodeDiagnostic';
+import { getCompiledData } from '../utils/getCompiledData';
+import { getContractName } from '../utils/getContractName';
+import { getCredentials } from '../login/getCredentials';
+import { getFileContent } from '../utils/getFileContent';
 
-import { Bytecode, Credentials } from '../utils/types'
-import { getFileContent } from '../utils/getFileContent'
-import { getCompiledData } from '../utils/getCompiledData'
-import { getContractName } from '../utils/getContractName'
-import { createAnalyzeRequest } from '../utils/createAnalyzeRequest'
-import { convertAbsoluteToRelativePath } from '../utils/convertAbsoluteToRelativePath'
-
-const os = require('os')
-const { window } = vscode
-let mythx: Client
+const os = require('os');
+const { window } = vscode;
+let mythx: Client;
 
 export async function analyzeContract(
     diagnosticCollection: vscode.DiagnosticCollection,
@@ -32,17 +31,17 @@ export async function analyzeContract(
                             if (!done) {
                                 throw new Error(
                                     `MythX: Error with solc compilation.`,
-                                )
+                                );
                             } else {
-                                const credentials: Credentials = await getCredentials()
+                                const credentials: Credentials = await getCredentials();
                                 const projectConfiguration: vscode.WorkspaceConfiguration = vscode.workspace.getConfiguration(
                                     'mythxvsc',
-                                )
+                                );
                                 let environment: string =
-                                    'https://api.mythx.io/v1/"'
+                                    'https://api.mythx.io/v1/"';
                                 if (projectConfiguration.environment) {
                                     environment =
-                                        projectConfiguration.environment
+                                        projectConfiguration.environment;
                                 }
 
                                 if (credentials.accessToken) {
@@ -52,7 +51,7 @@ export async function analyzeContract(
                                         'mythXvsc',
                                         environment,
                                         credentials.accessToken,
-                                    )
+                                    );
                                 } else {
                                     mythx = new Client(
                                         credentials.ethAddress,
@@ -60,27 +59,27 @@ export async function analyzeContract(
                                         'mythXvsc',
                                         environment,
                                         null,
-                                    )
-                                    await mythx.login()
+                                    );
+                                    await mythx.login();
                                 }
 
                                 const fileContent = await getFileContent(
                                     fileUri,
-                                )
+                                );
 
                                 const contractName = await getContractName(
                                     fileUri,
-                                )
+                                );
 
                                 const compiled: any = await getCompiledData(
                                     fileUri,
-                                )
+                                );
 
                                 /*
 								CREATE REQUEST OBJECT
 							    */
 
-                                let FILEPATH = fileUri.fsPath
+                                let FILEPATH = fileUri.fsPath;
 
                                 /* 
                                     GET ROOTH PATH FOLDER
@@ -88,9 +87,9 @@ export async function analyzeContract(
 
                                 // Windows OS hack
                                 if (os.platform() === 'win32') {
-                                    FILEPATH = FILEPATH.replace(/\\/g, '/')
+                                    FILEPATH = FILEPATH.replace(/\\/g, '/');
                                     if (FILEPATH.charAt(0) === '/') {
-                                        FILEPATH = FILEPATH.substr(1)
+                                        FILEPATH = FILEPATH.substr(1);
                                     }
                                 }
 
@@ -98,23 +97,23 @@ export async function analyzeContract(
                                 const rootPath = FILEPATH.substring(
                                     0,
                                     FILEPATH.lastIndexOf('/'),
-                                )
+                                );
 
-                                let directoryPath = rootPath.replace(/\\/g, '/')
+                                let directoryPath = rootPath.replace(/\\/g, '/');
                                 let rootDirectory: any = directoryPath.split(
                                     '/',
-                                )
+                                );
                                 rootDirectory =
-                                    rootDirectory[rootDirectory.length - 1]
+                                    rootDirectory[rootDirectory.length - 1];
 
-                                const contract = compiled.contracts[FILEPATH]
+                                const contract = compiled.contracts[FILEPATH];
 
-                                const sources = compiled.sources
+                                const sources = compiled.sources;
                                 // source is required by our API but does not exist in solc output
-                                sources[FILEPATH].source = fileContent
+                                sources[FILEPATH].source = fileContent;
 
-                                let newSources = {}
-                                let sourcesKeys = Object.keys(compiled.sources)
+                                let newSources = {};
+                                let sourcesKeys = Object.keys(compiled.sources);
                                 sourcesKeys.map((key) => {
                                     // Remove AST References
                                     if (compiled.sources[key].ast) {
@@ -125,7 +124,7 @@ export async function analyzeContract(
                                                 .absolutePath,
                                             directoryPath,
                                             rootDirectory,
-                                        )
+                                        );
                                     }
                                     if (compiled.sources[key].legacyAST) {
                                         compiled.sources[
@@ -135,7 +134,7 @@ export async function analyzeContract(
                                                 .attributes.absolutePath,
                                             directoryPath,
                                             rootDirectory,
-                                        )
+                                        );
                                     }
                                     // Remap key
                                     newSources[
@@ -144,20 +143,20 @@ export async function analyzeContract(
                                             directoryPath,
                                             rootDirectory,
                                         )
-                                    ] = compiled.sources[key]
-                                })
+                                    ] = compiled.sources[key];
+                                });
 
                                 // Bytecode
                                 const bytecode: Bytecode =
-                                    contract[contractName].evm.bytecode
+                                    contract[contractName].evm.bytecode;
                                 const deployedBytecode: Bytecode =
-                                    contract[contractName].evm.deployedBytecode
+                                    contract[contractName].evm.deployedBytecode;
 
                                 // Metadata
                                 const metadata = JSON.parse(
                                     contract[contractName].metadata,
-                                )
-                                const solcVersion = metadata.compiler.version
+                                );
+                                const solcVersion = metadata.compiler.version;
 
                                 const requestMythx = createAnalyzeRequest(
                                     contractName,
@@ -172,25 +171,25 @@ export async function analyzeContract(
                                     Object.keys(newSources),
                                     solcVersion,
                                     'quick',
-                                )
+                                );
 
                                 const analyzeRes = await mythx.analyze(
                                     requestMythx,
-                                )
+                                );
 
                                 // TODO: MOVE THIS TO OWN FILE AND MAKE IT AVAILABLE TO ALL COMMANDS
                                 let dashboardLink: string =
-                                    'https://dashboard.mythx.io/#/console/analyses'
+                                    'https://dashboard.mythx.io/#/console/analyses';
 
                                 if (
                                     environment ===
                                     'https://api.staging.mythx.io/v1/'
                                 ) {
                                     dashboardLink =
-                                        'https://dashboard.staging.mythx.io/#/console/analyses'
+                                        'https://dashboard.staging.mythx.io/#/console/analyses';
                                 }
 
-                                const { uuid } = analyzeRes
+                                const { uuid } = analyzeRes;
 
                                 vscode.window
                                     .showInformationMessage(
@@ -199,8 +198,8 @@ export async function analyzeContract(
                                         'Dismiss',
                                     )
                                     .then((x) => {
-                                        return
-                                    })
+                                        return;
+                                    });
 
                                 // Get in progress bar
                                 await window.withProgress(
@@ -218,39 +217,39 @@ export async function analyzeContract(
                                                 async () => {
                                                     const analysis = await mythx.getAnalysisStatus(
                                                         uuid,
-                                                    )
+                                                    );
                                                     if (
                                                         analysis.status ===
                                                         'Finished'
                                                     ) {
-                                                        clearInterval(timer)
-                                                        resolve('done')
+                                                        clearInterval(timer);
+                                                        resolve('done');
                                                     }
                                                 },
                                                 10000,
-                                            )
+                                            );
                                         }),
-                                )
+                                );
 
-                                diagnosticCollection.clear()
+                                diagnosticCollection.clear();
                                 const analysisResult = await mythx.getDetectedIssues(
                                     uuid,
-                                )
+                                );
 
-                                const { issues } = analysisResult[0]
+                                const { issues } = analysisResult[0];
 
                                 // Some warning have messages but no SWCID (like free trial user warn)
                                 const filtered = issues.filter(
                                     (issue) => issue.swcID !== '',
-                                )
+                                );
                                 if (!filtered) {
                                     vscode.window.showInformationMessage(
                                         `MythXvs: No security issues found in your contract.`,
-                                    )
+                                    );
                                 } else {
                                     vscode.window.showWarningMessage(
                                         `MythXvs: found ${filtered.length} security issues with contract.`,
-                                    )
+                                    );
                                 }
 
                                 // Diagnostic
@@ -258,15 +257,15 @@ export async function analyzeContract(
                                     vscode.window.activeTextEditor.document,
                                     diagnosticCollection,
                                     analysisResult,
-                                )
+                                );
                             }
                         } catch (err) {
-                            vscode.window.showErrorMessage(`MythXvsc: ${err}`)
+                            vscode.window.showErrorMessage(`MythXvsc: ${err}`);
                         }
-                    })
+                    });
             },
             (err) => {
-                throw new Error(`MythX: Error with solc compilation. ${err}`)
+                throw new Error(`MythX: Error with solc compilation. ${err}`);
             },
-        )
+        );
 }
